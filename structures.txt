@@ -1,0 +1,137 @@
+SENEMALI ADMIN - ARCHITECTURE ET STRUCTURE DU PROJET
+====================================================
+
+1. PRESENTATION
+----------------
+SeneMali Admin est une application web de gestion agricole construite avec
+Angular 18, TypeScript et Angular Material. Elle fournit un espace
+d'administration et un espace fournisseur. Les écrans sont des composants
+Angular standalone, organisés par fonctionnalité et chargés à la demande
+via le routeur Angular.
+
+Nom de l'architecture :
+Architecture modulaire orientée fonctionnalités (Feature-Based), structurée
+en couches Core / Features / Shared. Il s'agit d'une application Angular SPA
+(Single-Page Application) connectée à une API backend, avec chargement différé
+(lazy loading) des pages métier.
+
+2. ARBORESCENCE PRINCIPALE
+--------------------------
+
+senemali-admin/
+|-- public/                         Images, logos et illustrations publiques
+|-- src/
+|   |-- app/
+|   |   |-- core/
+|   |   |   |-- guards/             Protection des routes et contrôle des rôles
+|   |   |   |-- interceptors/       Ajout du token et gestion centralisée des erreurs
+|   |   |   |-- models/             DTO, réponses API et types métier
+|   |   |   `-- services/           Authentification, CRUD, fichiers, confirmations,
+|   |   |                            notifications visuelles
+|   |   |-- features/               Fonctionnalités et pages métier
+|   |   |   |-- auth/               Connexion et inscription fournisseur
+|   |   |   |-- dashboard/          Tableau de bord
+|   |   |   |-- utilisateurs/       Gestion des utilisateurs et création d'admin
+|   |   |   |-- validations/        Validation des comptes et des intrants
+|   |   |   |-- agriculteurs/       Liste des agriculteurs
+|   |   |   |-- acheteurs/          Liste des acheteurs
+|   |   |   |-- fournisseurs/       Liste des fournisseurs
+|   |   |   |-- produits/           Catalogue des produits agricoles
+|   |   |   |-- intrants/           Intrants admin et intrants fournisseur
+|   |   |   |-- commandes/          Liste et détail des commandes
+|   |   |   |-- categories-cultures/ Categories et cultures associées
+|   |   |   |-- cultures/           Gestion des cultures
+|   |   |   |-- conseils/           Conseils éditoriaux
+|   |   |   |-- tutoriels/          Guides avec image ou vidéo
+|   |   |   |-- prix-marche/        Relevés des prix du marché
+|   |   |   |-- partenaires/        Partenaires financiers
+|   |   |   |-- financements/       Offres et disponibilité des financements
+|   |   |   |-- prestataires/       Prestataires agricoles
+|   |   |   |-- services-agricoles/ Services et disponibilité
+|   |   |   |-- notifications/      Envoi et consultation des notifications
+|   |   |   `-- mon-profil/         Profil du fournisseur connecté
+|   |   |-- layout/
+|   |   |   |-- auth-layout/        Présentation commune connexion/inscription
+|   |   |   |-- main-layout/        Sidebar, barre supérieure et contenu connecté
+|   |   |   `-- nav-items.ts        Liens de navigation filtrés par rôle
+|   |   |-- shared/
+|   |   |   `-- components/         Composants UI partagés : tableaux, badges,
+|   |   |                            upload, confirmation, en-têtes, états, etc.
+|   |   |-- app.component.*         Composant racine
+|   |   |-- app.config.ts           Fournisseurs Angular globaux
+|   |   `-- app.routes.ts           Routes principales et restrictions d'accès
+|   |-- environments/               Configuration API par environnement
+|   |-- index.html                  Document HTML de l'application
+|   |-- main.ts                     Point d'entrée Angular
+|   `-- styles.scss                 Design system global et styles partagés
+|-- angular.json                    Configuration build, serve et assets publics
+|-- package.json                    Dépendances et commandes npm
+|-- tsconfig*.json                  Configuration TypeScript
+`-- ecrans-figma.csv                Inventaire des écrans et interactions
+
+3. ORGANISATION D'UNE FONCTIONNALITE
+------------------------------------
+Une fonctionnalité dans src/app/features/<fonctionnalite>/ regroupe en général :
+
+- <fonctionnalite>-list.component.ts/html/scss : affichage et actions de liste ;
+- <fonctionnalite>-form.component.ts/html/scss : création et modification ;
+- <fonctionnalite>.service.ts : appels API propres à la ressource ;
+- <fonctionnalite>.routes.ts : routes enfants chargées à la demande.
+
+Les composants standalone déclarent directement leurs dépendances Angular
+et leurs composants partagés dans leur propriété imports.
+
+4. CIRCULATION DES DONNEES
+--------------------------
+Composant de page -> service métier -> HttpClient -> API backend
+API backend -> service métier -> composant -> template
+
+Les modèles dans core/models décrivent les données envoyées et reçues.
+CrudService fournit les opérations communes findAll, findById, create, update
+et remove ; les services de fonctionnalité précisent la ressource API et
+peuvent ajouter des opérations métier. RxJS Observable est utilisé pour les
+requêtes HTTP.
+
+FileStorageService envoie les fichiers à l'API et résout les URL des médias.
+Les fichiers placés dans public sont copiés à la racine des assets compilés,
+conformément à angular.json.
+
+5. ROUTAGE ET SECURITE
+----------------------
+- app.routes.ts déclare les pages publiques et connectées.
+- authGuard réserve l'espace principal aux utilisateurs authentifiés.
+- guestGuard réserve connexion/inscription aux visiteurs.
+- roleGuard protège les pages par rôle (administrateur ou fournisseur).
+- Les pages métier sont généralement lazy-loadées pour ne charger leur code
+  qu'à l'ouverture de la fonctionnalité.
+- authInterceptor ajoute les informations d'authentification aux requêtes.
+- errorInterceptor centralise le traitement des erreurs HTTP.
+
+6. INTERFACE ET DESIGN SYSTEM
+-----------------------------
+- Angular Material est utilisé notamment pour les icônes et animations.
+- styles.scss définit les couleurs, la typographie Montserrat, les boutons,
+  les champs, cartes et badges partagés.
+- Les fichiers SCSS des composants contiennent les styles propres à chaque page.
+- shared/components regroupe les éléments réutilisables afin de conserver une
+  présentation cohérente.
+- Les rôles déterminent les éléments visibles de la sidebar.
+
+7. CONFIGURATION ET COMMANDES
+----------------------------
+Prérequis : Node.js et npm.
+
+Installer les dépendances :
+  npm install
+
+Démarrer le serveur de développement :
+  npm start
+
+Compiler l'application :
+  npm run build
+
+Lancer les tests configurés :
+  npm test
+
+La configuration du projet et des assets se trouve dans angular.json.
+Les URL de backend sont définies dans src/environments/.

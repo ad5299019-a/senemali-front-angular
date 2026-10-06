@@ -1,0 +1,53 @@
+
+    <app-page-header [title]="isEdit() ? 'Modifier mon intrant' : 'Nouvel intrant'">
+      <a routerLink="/mes-intrants" class="btn btn-outline">← Retour à la liste</a>
+    </app-page-header>
+
+    @if (isEdit()) {
+      <p class="notice text-muted">
+        Toute modification remet votre intrant en statut « en attente » de nouvelle validation par un administrateur.
+      </p>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
+      <div class="field">
+        <label>Image</label>
+        <app-file-upload folder="intrants" [initialUrl]="form.controls.imageUrl.value" (uploaded)="form.patchValue({ imageUrl: $event })" />
+      </div>
+
+      <div class="field">
+        <label>Nom de l'intrant</label>
+        <input class="input" formControlName="nomIntrant" placeholder="Ex : Engrais NPK 15-15-15" [class.invalid]="isInvalid('nomIntrant')" />
+        @if (isInvalid('nomIntrant')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="field">
+        <label>Type d'intrant</label>
+        <input class="input" formControlName="typeIntrant" placeholder="Ex : Engrais, semence, produit phytosanitaire..." [class.invalid]="isInvalid('typeIntrant')" />
+        @if (isInvalid('typeIntrant')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="field">
+        <label>Prix (FCFA)</label>
+        <input class="input" type="number" min="0" formControlName="prix" [class.invalid]="isInvalid('prix')" />
+        @if (isInvalid('prix')) { <span class="error">Prix requis (≥ 0)</span> }
+      </div>
+
+      <div class="field">
+        <label>Description</label>
+        <textarea class="textarea" formControlName="description"></textarea>
+      </div>
+
+      <label class="checkbox-field">
+        <input type="checkbox" formControlName="disponible" />
+        Disponible à la vente
+      </label>
+
+      <div class="flex gap-2" style="margin-top: 16px;">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer' : 'Publier') }}
+        </button>
+        <a routerLink="/mes-intrants" class="btn btn-ghost">Annuler</a>
+      </div>
+    </form>
+  

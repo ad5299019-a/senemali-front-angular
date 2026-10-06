@@ -1,0 +1,39 @@
+
+    <app-page-header [title]="isEdit() ? 'Modifier le relevé' : 'Nouveau relevé de prix'">
+      <a routerLink="/prix-marche" class="btn btn-outline">← Retour à la liste</a>
+    </app-page-header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
+      <div class="field">
+        <label>Produit</label>
+        <input class="input" formControlName="nomProduit" placeholder="Ex : Sac de riz local 50kg" [class.invalid]="isInvalid('nomProduit')" />
+        @if (isInvalid('nomProduit')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Prix (FCFA)</label>
+          <input class="input" type="number" min="0" formControlName="prixProduit" [class.invalid]="isInvalid('prixProduit')" />
+          @if (isInvalid('prixProduit')) { <span class="error">Prix requis (≥ 0)</span> }
+        </div>
+        <div class="field">
+          <label>Unité</label>
+          <input class="input" formControlName="unite" placeholder="Ex : sac, kg, litre" [class.invalid]="isInvalid('unite')" />
+          @if (isInvalid('unite')) { <span class="error">Ce champ est requis</span> }
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Localisation observée</label>
+        <input class="input" formControlName="localisation" placeholder="Ex : Marché de Sikasso" [class.invalid]="isInvalid('localisation')" />
+        @if (isInvalid('localisation')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer' : 'Publier') }}
+        </button>
+        <a routerLink="/prix-marche" class="btn btn-ghost">Annuler</a>
+      </div>
+    </form>
+  

@@ -1,0 +1,119 @@
+
+    <app-page-header [title]="'Commande #' + (commande()?.idCommande ?? '')">
+      <a routerLink="/commandes" class="btn btn-outline">← Retour à la liste</a>
+    </app-page-header>
+
+    @if (loading()) {
+      <app-loading-spinner />
+    } @else {
+    @if (commande(); as c) {
+      <section class="card contact-card">
+        <div class="contact-card__avatar"><mat-icon>person</mat-icon></div>
+        <div class="contact-card__identity">
+          <span class="contact-card__eyebrow">COMMANDE PASSÉE PAR</span>
+          <h2>{{ client()?.prenom }} {{ client()?.nom }}</h2>
+          @if (!client()?.nom && !client()?.prenom) {
+            <h2>{{ c.nomUtilisateur ?? 'Client' }}</h2>
+          }
+          <span class="contact-card__reference">Référence client : #{{ c.idUtilisateur }}</span>
+        </div>
+        <div class="contact-card__details">
+          @if (client()?.telephone; as telephone) {
+            <div class="contact-card__phone-card">
+              <mat-icon>call</mat-icon>
+              <a [href]="'tel:' + telephone">{{ telephone }}</a>
+            </div>
+          } @else {
+            <div class="contact-card__phone-card contact-card__phone-card--empty">
+              <mat-icon>call</mat-icon>
+              <span>Téléphone non renseigné</span>
+            </div>
+          }
+          <span class="contact-card__detail"><mat-icon>location_on</mat-icon><span>{{ client()?.localisation || 'Localité non renseignée' }}</span></span>
+        </div>
+      </section>
+
+      <section class="seller-section">
+        <div class="seller-section__heading">
+          <div>
+            <span class="contact-card__eyebrow">VENDEUR(S)</span>
+          </div>
+          <span class="seller-section__count">{{ sellers().length }} vendeur(s)</span>
+        </div>
+        @if (sellersLoading()) {
+          <p class="seller-empty">Chargement des coordonnées du vendeur…</p>
+        } @else if (sellers().length) {
+          <div class="seller-grid">
+            @for (seller of sellers(); track seller.kind + seller.id) {
+              <article class="card contact-card seller-card">
+                <div class="contact-card__avatar">
+                  <mat-icon>{{ seller.kind === 'Agriculteur' ? 'agriculture' : 'storefront' }}</mat-icon>
+                </div>
+                <div class="contact-card__identity">
+                  <span class="contact-card__eyebrow">COMMANDE PASSÉE CHEZ · {{ seller.kind }} </span>
+                  <h2>{{ seller.name }}</h2>
+                  <span class="contact-card__reference">Référence vendeur : #{{ seller.id }}</span>
+                </div>
+                <div class="contact-card__details">
+                  @if (seller.telephone) {
+                    <div class="contact-card__phone-card">
+                      <mat-icon>call</mat-icon>
+                      <a [href]="'tel:' + seller.telephone" [attr.aria-label]="'Appeler ' + seller.name">{{ seller.telephone }}</a>
+                    </div>
+                  } @else {
+                    <div class="contact-card__phone-card contact-card__phone-card--empty">
+                      <mat-icon>call</mat-icon>
+                      <span>Téléphone non renseigné</span>
+                    </div>
+                  }
+                  <span class="contact-card__detail"><mat-icon>location_on</mat-icon><span>{{ seller.localisation || 'Localité non renseignée' }}</span></span>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <p class="seller-empty">Les informations du vendeur ne sont pas disponibles pour les articles de cette commande.</p>
+        }
+      </section>
+
+      <div class="grid">
+        <div class="card info-card">
+          <div class="section-heading"><span class="section-heading__icon"><mat-icon>receipt_long</mat-icon></span><h3>Résumé de la commande</h3></div>
+          <dl>
+            <dt>Numéro</dt><dd>#{{ c.idCommande }}</dd>
+            <dt>Date</dt><dd>{{ formatDate(c.dateCommande) }}</dd>
+            <dt>Montant total</dt><dd class="total-amount">{{ c.montantTotal.toLocaleString('fr-FR') }} FCFA</dd>
+          </dl>
+
+          <div class="field status-field">
+            <label for="commande-status">Statut de la commande</label>
+            <select id="commande-status" class="select" [ngModel]="c.status" (ngModelChange)="updateStatut($event)">
+              @for (opt of statutOptions; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="card lines-card">
+          <div class="section-heading"><span class="section-heading__icon"><mat-icon>shopping_bag</mat-icon></span><h3>Articles commandés</h3></div>
+          <div class="lines-table-wrap"><table>
+            <thead>
+              <tr><th>Article</th><th style="text-align:right">Qté</th><th style="text-align:right">Prix unit.</th><th style="text-align:right">Montant</th></tr>
+            </thead>
+            <tbody>
+              @for (d of c.details; track d.idDetail) {
+                <tr>
+                  <td>{{ d.nomProduit ?? d.nomIntrant ?? '—' }}</td>
+                  <td style="text-align:right">{{ d.quantite }}</td>
+                  <td style="text-align:right">{{ d.prixUnitaire.toLocaleString('fr-FR') }} FCFA</td>
+                  <td style="text-align:right">{{ d.montant.toLocaleString('fr-FR') }} FCFA</td>
+                </tr>
+              }
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+    }
+    }
+  

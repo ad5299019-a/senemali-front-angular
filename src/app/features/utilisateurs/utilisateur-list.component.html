@@ -1,0 +1,169 @@
+
+    <app-page-header title="Gestion des utilisateurs" subtitle="Comptes agriculteurs, fournisseurs, acheteurs et administrateurs">
+      <button type="button" class="btn btn-primary add-admin-button" (click)="showAdminForm.set(true)">
+        <mat-icon>add</mat-icon>
+        Ajouter un administrateur
+      </button>
+    </app-page-header>
+
+    @if (showAdminForm()) {
+      <app-admin-create-dialog (closed)="showAdminForm.set(false)" (created)="onAdminCreated()" />
+    }
+
+    <section class="filters card">
+      <div class="filter-top">
+        <div>
+          <strong>{{ filteredRows().length }} comptes</strong>
+          <p>Ouvrez un profil pour consulter ses informations ou utilisez les actions pour gérer son compte.</p>
+        </div>
+        <label class="search">
+          <mat-icon aria-hidden="true">search</mat-icon>
+          <input type="search" placeholder="Rechercher un utilisateur" [value]="search()" (input)="onSearchInput($event)" />
+        </label>
+      </div>
+      <div class="role-tabs" aria-label="Filtrer par rôle">
+        @for (tab of roleTabs; track tab.value) {
+          <button type="button" [class.active]="activeRole() === tab.value" [attr.aria-pressed]="activeRole() === tab.value" (click)="activeRole.set(tab.value)">{{ tab.label }}</button>
+        }
+      </div>
+    </section>
+
+    <app-data-table [columns]="columns" [rows]="filteredRows()" [loading]="loading()" emptyTitle="Aucun utilisateur" [rowActionsTemplate]="actionsTpl" />
+
+    <ng-template #userNameTpl let-row>
+      <button type="button" class="user-name" (click)="openUserDetails(row)" [attr.aria-label]="'Voir le profil de ' + row.prenom + ' ' + row.nom">
+        <span class="user-avatar">
+          @if (row.photoProfil) {
+            <img [src]="row.photoProfil" [alt]="''" />
+          } @else {
+            <mat-icon aria-hidden="true">{{ roleIcon(row.role) }}</mat-icon>
+          }
+        </span>
+        <span class="user-name__text">
+          <strong>{{ row.prenom }} {{ row.nom }}</strong>
+          <small>{{ roleLabel(row.role) }}</small>
+        </span>
+        <mat-icon class="user-name__open" aria-hidden="true">open_in_new</mat-icon>
+      </button>
+    </ng-template>
+
+    <ng-template #userStatusTpl let-row>
+      <span class="user-status" [class.user-status--inactive]="!row.statut">
+        <span class="user-status__dot"></span>
+        {{ row.statut ? 'Actif' : 'En attente' }}
+      </span>
+    </ng-template>
+
+    <ng-template #actionsTpl let-row>
+      <button [class]="row.statut ? 'btn btn-outline btn-sm user-action' : 'btn btn-primary btn-sm user-action'" (click)="toggleStatut(row)">
+        <mat-icon>{{ row.statut ? 'person_off' : 'person_check' }}</mat-icon>
+        {{ row.statut ? 'Désactiver' : 'Activer' }}
+      </button>
+      <button class="btn btn-danger btn-sm user-action" (click)="remove(row)">
+        <mat-icon>delete_outline</mat-icon>
+        Supprimer
+      </button>
+    </ng-template>
+
+    @if (selectedUser(); as user) {
+      <div class="user-sheet-backdrop" role="presentation" (click)="closeUserDetails()" (keydown.escape)="closeUserDetails()">
+        <section class="user-sheet" role="dialog" aria-modal="true" aria-labelledby="user-sheet-title" (click)="$event.stopPropagation()">
+          <header class="user-sheet__header">
+            <div class="user-sheet__identity">
+              <span class="user-sheet__avatar">
+                @if (user.photoProfil) {
+                  <img [src]="user.photoProfil" [alt]="''" />
+                } @else {
+                  <mat-icon aria-hidden="true">{{ roleIcon(user.role) }}</mat-icon>
+                }
+              </span>
+              <div>
+                <span class="user-sheet__eyebrow">FICHE UTILISATEUR</span>
+                <h2 id="user-sheet-title">{{ user.prenom }} {{ user.nom }}</h2>
+                <div class="user-sheet__badges">
+                  <span class="user-sheet__role">{{ roleLabel(user.role) }}</span>
+                  <span class="user-sheet__status" [class.user-sheet__status--inactive]="!user.statut">
+                    <mat-icon>{{ user.statut ? 'check_circle' : 'schedule' }}</mat-icon>
+                    {{ user.statut ? 'Compte actif' : 'En attente d’activation' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="user-sheet__close" aria-label="Fermer la fiche" (click)="closeUserDetails()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </header>
+          <div class="user-sheet__details">
+            <div class="user-sheet__field">
+              <span>Email</span>
+              <strong>{{ user.email || 'Non renseigné' }}</strong>
+            </div>
+            <div class="user-sheet__field">
+              <span>Téléphone</span>
+              @if (user.telephone) {
+                <a [href]="'tel:' + user.telephone">{{ user.telephone }}</a>
+              } @else {
+                <strong>Non renseigné</strong>
+              }
+            </div>
+            <div class="user-sheet__field">
+              <span>Localisation</span>
+              <strong>{{ user.localisation || 'Non renseignée' }}</strong>
+            </div>
+            <div class="user-sheet__field">
+              <span>Date d’inscription</span>
+              <strong>{{ formatCreationDate(user.dateCreation) }}</strong>
+            </div>
+            <div class="user-sheet__field">
+              <span>Identifiant</span>
+              <strong>#{{ user.id }}</strong>
+            </div>
+          </div>
+          @if (user.role === RoleEnum.FOURNISSEUR) {
+            <section class="supplier-details" aria-label="Informations du fournisseur">
+              <h3>Informations fournisseur</h3>
+              @if (fournisseurDetailsLoading()) {
+                <p class="supplier-details__message"><mat-icon>hourglass_top</mat-icon>Chargement des informations fournisseur…</p>
+              } @else if (fournisseurDetailsError()) {
+                <p class="supplier-details__message supplier-details__message--error">Les informations complémentaires ne sont pas disponibles pour le moment.</p>
+              } @else {
+                @if (fournisseurDetails(); as fournisseur) {
+                  <div class="supplier-details__grid">
+                    <div class="user-sheet__field">
+                      <span>Entreprise</span>
+                      <strong>{{ fournisseur.nomEntreprise || 'Non renseignée' }}</strong>
+                    </div>
+                    <div class="user-sheet__field">
+                      <span>Zone de vente</span>
+                      <strong>{{ fournisseur.zoneDeVente || 'Non renseignée' }}</strong>
+                    </div>
+                    <div class="user-sheet__field supplier-details__description">
+                      <span>Description</span>
+                      <strong>{{ fournisseur.description || 'Aucune description renseignée' }}</strong>
+                    </div>
+                    <div class="user-sheet__field">
+                      <span>Validation fournisseur</span>
+                      <strong>{{ fournisseurStatusLabel(fournisseur.statutFournisseur) }}</strong>
+                    </div>
+                    <div class="user-sheet__field">
+                      <span>Identifiant fournisseur</span>
+                      <strong>#{{ fournisseur.idFournisseur }}</strong>
+                    </div>
+                  </div>
+                } @else {
+                  <p class="supplier-details__message">Aucune information complémentaire trouvée pour ce fournisseur.</p>
+                }
+              }
+            </section>
+          }
+          <footer class="user-sheet__footer">
+            <button type="button" class="btn btn-outline" (click)="closeUserDetails()">Fermer</button>
+            <button type="button" [class]="user.statut ? 'btn btn-outline' : 'btn btn-primary'" (click)="toggleStatut(user); closeUserDetails()">
+              <mat-icon>{{ user.statut ? 'person_off' : 'person_check' }}</mat-icon>
+              {{ user.statut ? 'Désactiver le compte' : 'Activer le compte' }}
+            </button>
+          </footer>
+        </section>
+      </div>
+    }
+  

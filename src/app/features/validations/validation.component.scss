@@ -1,0 +1,65 @@
+
+    :host { display: block; }
+    .pending-count { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border-radius: 999px; background: #fff4df; color: #a56300; font-size: 11px; font-weight: 600; }
+    .pending-count > span, .status > span, .intrant-status > span { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .tabs { display: flex; width: min(100%, 560px); gap: 7px; margin-bottom: 22px; padding: 7px; border-radius: 11px; background: #fff; box-shadow: var(--shadow-md); }
+    .tabs button { display: inline-flex; flex: 1; align-items: center; justify-content: center; gap: 9px; min-height: 46px; padding: 0 14px; border: 0; border-radius: 8px; background: transparent; color: var(--color-text-muted); font: inherit; font-size: 13px; font-weight: 600; line-height: 1.2; cursor: pointer; }
+    .tabs button mat-icon { display: inline-grid; place-items: center; width: 21px; height: 21px; flex: none; overflow: visible; font-size: 21px; line-height: 1; }
+    .tabs button.active { background: #e9f5ec; color: var(--color-primary-500); font-weight: 700; }
+    .tabs button.active mat-icon { color: var(--color-primary-500); }
+    .tab-count { min-width: 20px; padding: 3px 7px; border-radius: 999px; background: rgba(0,0,0,.06); font-size: 11px; line-height: 1.2; text-align: center; }
+    .panel { overflow: hidden; }
+    .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 17px 20px; border-bottom: 1px solid var(--color-border); }
+    .panel-heading h2 { font-size: 16px; font-weight: 700; }
+    .panel-heading p { margin-top: 5px; color: var(--color-text-subtle); font-size: 12px; }
+    .status-filter { display: flex; align-items: center; gap: 9px; color: var(--color-text-muted); font-size: 12px; }
+    .status-filter select { padding: 8px 11px; border: 1px solid var(--color-input-icon); border-radius: 7px; background: #fff; color: var(--color-text); font: inherit; }
+    .intrant-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 18px; }
+    .intrant-card { display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; }
+    .intrant-main { display: flex; align-items: flex-start; gap: 11px; padding: 13px; }
+    .intrant-image { width: 76px; height: 76px; flex: none; border-radius: 9px; object-fit: cover; }
+    .intrant-image--placeholder { display: grid; place-items: center; background: var(--color-primary-50); }
+    .intrant-image--placeholder mat-icon { color: var(--color-primary-500); }
+    .intrant-info { min-width: 0; flex: 1; }
+    .intrant-info > strong, .account-info strong { display: block; color: #24352a; font-size: 13px; font-weight: 700; }
+    .intrant-info > span, .account-info span { display: block; margin-top: 4px; color: var(--color-text-subtle); font-size: 11px; }
+    .intrant-facts { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 11px; }
+    .intrant-facts span { display: flex; flex-direction: column; gap: 3px; color: var(--color-text-subtle); font-size: 10px; }
+    .intrant-facts b { color: #304237; font-size: 12px; font-weight: 700; }
+    .intrant-description { flex: 1; padding: 10px 13px; border-top: 1px solid var(--color-border); color: var(--color-text-muted); font-size: 11px; line-height: 1.55; }
+    .intrant-status { display: inline-flex; align-items: center; gap: 6px; margin-right: auto; color: #a56300; font-size: 11px; }
+    .intrant-status.status--done { color: #237a3b; }
+    .intrant-status.status--cancelled { color: #d4433e; }
+    .intrant-actions { display: flex; align-items: center; gap: 6px; min-height: 48px; padding: 8px 10px; border-top: 1px solid var(--color-border); }
+    .status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; padding: 6px 9px; border-radius: 999px; background: #fff4df; color: #a56300; font-size: 10px; font-weight: 700; }
+    .status--done { background: #e8f6eb; color: #237a3b; }
+    .status--cancelled { background: #fff0ef; color: #d4433e; }
+    .intrant-actions mat-icon, .account-actions mat-icon { display: inline-grid; place-items: center; width: 17px; height: 17px; flex: none; overflow: visible; font-size: 17px; line-height: 1; }
+    .reject { border-color: #f3d0cc; color: #d4433e; }
+    .account-list { padding: 4px 18px; }
+    .account-list__notice { margin: 10px 0; padding: 10px 12px; border-radius: 8px; background: var(--color-warning-50); color: #8a5a00; font-size: 11px; line-height: 1.45; }
+    .account-row { display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 2px; border-bottom: 1px solid var(--color-border); }
+    .account-row:last-child { border-bottom: 0; }
+    .avatar { display: grid; flex: none; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #e8f6eb; color: var(--color-primary-500); font-size: 12px; font-weight: 700; }
+    .account-info { display: flex; flex: 1; flex-direction: column; gap: 4px; min-width: 120px; }
+    .account-status { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+    .account-status small { color: var(--color-text-subtle); font-size: 10px; }
+    .account-actions { display: flex; gap: 7px; }
+    .empty { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 150px; color: var(--color-text-subtle); font-size: 12px; }
+    .empty mat-icon { color: var(--color-primary-400); }
+    @media (max-width: 800px) {
+      .intrant-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .account-row { flex-wrap: wrap; }
+      .account-info { flex-basis: calc(100% - 50px); }
+      .account-status { margin-left: 48px; }
+      .account-actions { margin-left: auto; }
+    }
+    @media (max-width: 540px) {
+      .panel-heading { align-items: flex-start; flex-direction: column; }
+      .tabs { width: 100%; }
+      .pending-count { font-size: 10px; }
+      .intrant-grid { grid-template-columns: 1fr; padding: 12px; }
+      .account-status { margin-left: 0; }
+      .account-actions { width: 100%; margin-left: 48px; }
+    }
+  

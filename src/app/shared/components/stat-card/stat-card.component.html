@@ -1,0 +1,10 @@
+
+    <div class="stat-card card">
+      <div class="stat-card__icon" [style.background]="iconBg()"><mat-icon aria-hidden="true">{{ icon() }}</mat-icon></div>
+      <div class="stat-card__content">
+        <p class="stat-card__label text-muted">{{ label() }}</p>
+        <p class="stat-card__value">{{ value() }}</p>
+      </div>
+      @if (detail()) { <p class="stat-card__detail">{{ detail() }}</p> }
+    </div>
+  

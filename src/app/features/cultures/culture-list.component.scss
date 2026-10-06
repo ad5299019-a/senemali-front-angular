@@ -1,0 +1,4 @@
+.culture-name { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.culture-name__image, .culture-name__placeholder { display: grid; place-items: center; box-sizing: border-box; width: 42px; height: 42px; flex: none; overflow: hidden; border-radius: 10px; background: var(--color-primary-50); object-fit: cover; }
+.culture-name__placeholder mat-icon { display: grid; place-items: center; width: 28px; height: 28px; overflow: visible; color: var(--color-primary-500); font-size: 27px; line-height: 1; }
+.culture-name strong { overflow: hidden; color: var(--color-text); font-size: 12px; font-weight: 700; text-overflow: ellipsis; }

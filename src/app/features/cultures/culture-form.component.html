@@ -1,0 +1,57 @@
+
+    <app-page-header [title]="isEdit() ? 'Modifier la culture' : 'Nouvelle culture'">
+      <a routerLink="/cultures" class="btn btn-outline">← Retour à la liste</a>
+    </app-page-header>
+
+    <div class="culture-form-layout">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
+        <div class="field">
+          <label>Image de la culture <span class="optional">(facultatif)</span></label>
+          <app-file-upload folder="cultures" [initialUrl]="form.controls.imageUrl.value" (uploaded)="form.patchValue({ imageUrl: $event })" />
+        </div>
+
+        <div class="field">
+          <label>Nom de la culture</label>
+          <input class="input" formControlName="nomCulture" placeholder="Ex : Maïs" [class.invalid]="isInvalid('nomCulture')" />
+          @if (isInvalid('nomCulture')) { <span class="error">Ce champ est requis</span> }
+        </div>
+
+        <div class="field">
+          <label>Catégorie</label>
+          <select class="select" formControlName="idCategorie" [class.invalid]="isInvalid('idCategorie')">
+            <option [ngValue]="null" disabled>Choisir une catégorie</option>
+            @for (cat of categories(); track cat.idCategorie) {
+              <option [ngValue]="cat.idCategorie">{{ cat.nomCategorie }}</option>
+            }
+          </select>
+          @if (isInvalid('idCategorie')) { <span class="error">Choisissez une catégorie</span> }
+          @if (categories().length === 0) {
+            <span class="hint">Aucune catégorie disponible — <a routerLink="/categories-cultures/nouveau">en créer une</a>.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label>Description</label>
+          <textarea class="textarea" formControlName="description" placeholder="Optionnel"></textarea>
+        </div>
+
+        <div class="flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer' : 'Créer') }}
+          </button>
+          <a routerLink="/cultures" class="btn btn-ghost">Annuler</a>
+        </div>
+      </form>
+
+      <aside class="culture-illustration" aria-label="Illustration d'une culture agricole">
+        <div class="culture-illustration__media">
+          <img src="/culture-illustration.svg" alt="Illustration de cultures agricoles en pleine croissance" />
+        </div>
+        <div class="culture-illustration__panel">
+          <span class="eyebrow">AU CŒUR DE NOS TERROIRS</span>
+          <h2>Chaque culture fait grandir l’avenir.</h2>
+          <p>Valorisez les cultures et les savoir-faire agricoles de nos régions.</p>
+        </div>
+      </aside>
+    </div>
+  

@@ -1,0 +1,43 @@
+
+    <app-page-header title="Prix du marché" subtitle="Relevés de prix observés par produit et par localité">
+      <a routerLink="nouveau" class="btn btn-primary">+ Nouveau relevé</a>
+    </app-page-header>
+
+    <section class="market-intro">
+      <span class="market-intro__icon"><mat-icon aria-hidden="true">monitoring</mat-icon></span>
+      <div>
+        <h2>Suivi des prix agricoles</h2>
+        <p>Consultez les dernières observations de prix par produit et par localité.</p>
+      </div>
+      <span class="market-count">{{ rows().length }} relevé(s)</span>
+    </section>
+
+    <app-data-table class="market-table" [columns]="columns" [rows]="rows()" [loading]="loading()" emptyTitle="Aucun relevé de prix" [rowActionsTemplate]="actionsTpl" />
+
+    <ng-template #productTpl let-row>
+      <div class="product-cell">
+        <span class="product-cell__icon"><mat-icon aria-hidden="true">eco</mat-icon></span>
+        <strong>{{ row.nomProduit }}</strong>
+      </div>
+    </ng-template>
+
+    <ng-template #priceTpl let-row>
+      <div class="price-cell">
+        <strong>{{ formatPrice(row.prixProduit) }} FCFA</strong>
+        <span>par {{ row.unite }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template #locationTpl let-row>
+      <span class="location-cell"><mat-icon aria-hidden="true">location_on</mat-icon>{{ row.localisation }}</span>
+    </ng-template>
+
+    <ng-template #dateTpl let-row>
+      <span class="date-cell">{{ formatDate(row.dateObserv) }}</span>
+    </ng-template>
+
+    <ng-template #actionsTpl let-row>
+      <a class="btn btn-outline btn-sm" [routerLink]="[row.idPrix, 'modifier']">Modifier</a>
+      <button class="btn btn-danger btn-sm" (click)="remove(row)">Supprimer</button>
+    </ng-template>
+  

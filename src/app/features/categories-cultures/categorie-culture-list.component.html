@@ -1,0 +1,67 @@
+
+    <app-page-header title="Catégories de cultures" subtitle="Regroupements de cultures (céréales, maraîchage, cultures de rente...)">
+      <a routerLink="nouveau" class="btn btn-primary">+ Nouvelle catégorie</a>
+    </app-page-header>
+
+    <app-data-table
+      [columns]="columns"
+      [rows]="rows()"
+      [loading]="loading()"
+      emptyTitle="Aucune catégorie"
+      emptyDescription="Créez votre première catégorie de culture."
+      [rowActionsTemplate]="actionsTpl"
+    />
+
+    <ng-template #culturesCountTpl let-row>
+      @if (row.cultures?.length) {
+        <button type="button" class="cultures-count" (click)="openCultures(row)" [attr.aria-label]="'Afficher les cultures liées à ' + row.nomCategorie">
+          {{ row.cultures?.length }} culture(s)
+          <mat-icon aria-hidden="true">open_in_new</mat-icon>
+        </button>
+      } @else {
+        <span class="cultures-count--empty">0 culture</span>
+      }
+    </ng-template>
+
+    <ng-template #actionsTpl let-row>
+      <a class="btn btn-outline btn-sm" [routerLink]="[row.idCategorie, 'modifier']">Modifier</a>
+      <button class="btn btn-danger btn-sm" (click)="remove(row)">Supprimer</button>
+    </ng-template>
+
+    @if (selectedCategory(); as category) {
+      <div class="culture-details-backdrop" role="presentation" (click)="closeCultures()" (keydown.escape)="closeCultures()">
+        <section class="culture-details" role="dialog" aria-modal="true" aria-labelledby="culture-details-title" (click)="$event.stopPropagation()">
+          <header class="culture-details__header">
+            <div>
+              <span class="culture-details__eyebrow">CULTURES LIÉES</span>
+              <h2 id="culture-details-title">{{ category.nomCategorie }}</h2>
+              @if (category.description) {
+                <p>{{ category.description }}</p>
+              }
+            </div>
+            <button type="button" class="culture-details__close" aria-label="Fermer les détails" (click)="closeCultures()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </header>
+          <div class="culture-details__list">
+            @for (culture of category.cultures ?? []; track culture.idCulture) {
+              <article class="culture-item">
+                @if (imageUrl(culture.imageUrl); as src) {
+                  <img class="culture-item__image" [src]="src" [alt]="culture.nomCulture" />
+                } @else {
+                  <span class="culture-item__placeholder"><mat-icon aria-hidden="true">spa</mat-icon></span>
+                }
+                <div class="culture-item__content">
+                  <h3>{{ culture.nomCulture }}</h3>
+                  <p>{{ culture.description || 'Aucune description renseignée.' }}</p>
+                </div>
+              </article>
+            }
+          </div>
+          <footer class="culture-details__footer">
+            <button type="button" class="btn btn-outline" (click)="closeCultures()">Fermer</button>
+          </footer>
+        </section>
+      </div>
+    }
+  

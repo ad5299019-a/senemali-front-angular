@@ -1,0 +1,53 @@
+
+    <app-page-header title="Envoyer une notification" subtitle="Notifiez un utilisateur précis (prix, conseil, information...)" />
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
+      <div class="grid-2">
+        <div class="field">
+          <label>Filtrer par rôle</label>
+          <select class="select" (change)="onRoleFilterChange($event)">
+            <option [value]="''">Tous les rôles</option>
+            @for (r of roleOptions; track r) {
+              <option [value]="r">{{ r }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Destinataire</label>
+          <select class="select" formControlName="idUtilisateur" [class.invalid]="isInvalid('idUtilisateur')">
+            <option [ngValue]="null" disabled>Choisir un destinataire</option>
+            @for (u of filteredUsers(); track u.id) {
+              <option [ngValue]="u.id">{{ u.prenom }} {{ u.nom }} — {{ u.role }}</option>
+            }
+          </select>
+          @if (isInvalid('idUtilisateur')) { <span class="error">Choisissez un destinataire</span> }
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Type de notification</label>
+        <select class="select" formControlName="type">
+          @for (t of typeOptions; track t.value) {
+            <option [ngValue]="t.value">{{ t.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Titre</label>
+        <input class="input" formControlName="titre" [class.invalid]="isInvalid('titre')" />
+        @if (isInvalid('titre')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="field">
+        <label>Message</label>
+        <textarea class="textarea" rows="5" formControlName="message" [class.invalid]="isInvalid('message')"></textarea>
+        @if (isInvalid('message')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="saving()">
+        {{ saving() ? 'Envoi...' : 'Envoyer la notification' }}
+      </button>
+    </form>
+  

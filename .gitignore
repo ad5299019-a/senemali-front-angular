@@ -1,0 +1,6 @@
+/dist
+/node_modules
+/.angular/cache
+npm-debug.log
+*.log
+.env

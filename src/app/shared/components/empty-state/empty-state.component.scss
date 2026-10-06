@@ -1,0 +1,9 @@
+
+    .empty {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      padding: 48px 20px; color: var(--color-text-muted);
+    }
+    .empty__icon { font-size: 34px; margin-bottom: 10px; }
+    .empty__title { font-weight: 700; color: var(--color-text); font-size: 14.5px; }
+    .empty__desc { font-size: 13px; margin-top: 4px; max-width: 320px; }
+  

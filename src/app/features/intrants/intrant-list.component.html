@@ -1,0 +1,128 @@
+<app-page-header title="Intrants" subtitle="Intrants publiés par les fournisseurs (semences, engrais, produits vétérinaires...)" />
+
+<section class="filters card">
+  <div class="filter-top">
+    <div>
+      <strong>{{ filteredRows().length }} intrant(s)</strong>
+      <p>Recherchez un intrant ou filtrez la liste par statut de validation.</p>
+    </div>
+    <label class="search">
+      <mat-icon aria-hidden="true">search</mat-icon>
+      <input type="search" placeholder="Rechercher un intrant" [value]="search()" (input)="onSearchInput($event)" />
+    </label>
+  </div>
+  <div class="status-tabs" aria-label="Filtrer par statut">
+    @for (tab of tabs; track tab.value) {
+      <button type="button" [class.active]="activeTab() === tab.value" [attr.aria-pressed]="activeTab() === tab.value" (click)="activeTab.set(tab.value)">{{ tab.label }}</button>
+    }
+  </div>
+</section>
+
+<app-data-table [columns]="columns" [rows]="filteredRows()" [loading]="loading()" emptyTitle="Aucun intrant" [rowActionsTemplate]="actionsTpl" />
+
+<ng-template #intrantNameTpl let-row>
+  <button type="button" class="intrant-link" (click)="openDetails(row)" [attr.aria-label]="'Voir les détails de ' + row.nomIntrant">
+    @if (imageUrl(row.imageUrl); as src) {
+      <img class="intrant-link__image" [src]="src" [alt]="''" />
+    } @else {
+      <span class="intrant-link__placeholder"><mat-icon aria-hidden="true">inventory_2</mat-icon></span>
+    }
+    <span class="intrant-link__name">{{ row.nomIntrant }}</span>
+    <mat-icon class="intrant-link__open" aria-hidden="true">open_in_new</mat-icon>
+  </button>
+</ng-template>
+
+<ng-template #actionsTpl let-row>
+  @if (row.statutIntrant !== Statut.VALIDE) {
+    <button class="btn btn-outline btn-sm" (click)="valider(row, Statut.VALIDE)"><mat-icon>check</mat-icon> Valider</button>
+  }
+  @if (row.statutIntrant !== Statut.REFUSE) {
+    <button class="btn btn-outline btn-sm" (click)="valider(row, Statut.REFUSE)"><mat-icon>close</mat-icon> Refuser</button>
+  }
+  <button class="btn btn-danger btn-sm" (click)="remove(row)"><mat-icon>delete_outline</mat-icon> Supprimer</button>
+</ng-template>
+
+@if (selectedIntrant(); as intrant) {
+  <div class="intrant-detail-backdrop" role="presentation" (click)="closeDetails()" (keydown.escape)="closeDetails()">
+    <section class="intrant-detail" role="dialog" aria-modal="true" aria-labelledby="intrant-detail-title" (click)="$event.stopPropagation()">
+      <header class="intrant-detail__header">
+        <div>
+          <span class="intrant-detail__eyebrow">FICHE INTRANT</span>
+          <h2 id="intrant-detail-title">{{ intrant.nomIntrant }}</h2>
+          <span class="intrant-detail__status" [class.intrant-detail__status--pending]="intrant.statutIntrant === Statut.EN_ATTENTE" [class.intrant-detail__status--refused]="intrant.statutIntrant === Statut.REFUSE">
+            {{ statusLabel(intrant.statutIntrant) }}
+          </span>
+        </div>
+        <button type="button" class="intrant-detail__close" aria-label="Fermer la fiche" (click)="closeDetails()"><mat-icon>close</mat-icon></button>
+      </header>
+
+      <div class="intrant-detail__body">
+        <div class="intrant-summary">
+          @if (imageUrl(intrant.imageUrl); as src) {
+            <img class="intrant-summary__image" [src]="src" [alt]="intrant.nomIntrant" />
+          } @else {
+            <div class="intrant-summary__placeholder"><mat-icon>inventory_2</mat-icon></div>
+          }
+          <div class="intrant-summary__facts">
+            <div><span>Type</span><strong>{{ intrant.typeIntrant || 'Non renseigné' }}</strong></div>
+            <div><span>Prix</span><strong>{{ intrant.prix.toLocaleString('fr-FR') }} FCFA</strong></div>
+            <div><span>Stock disponible</span><strong>{{ intrant.quantite ?? 'Non renseigné' }}</strong></div>
+            <div><span>Disponibilité</span><strong>{{ intrant.disponible ? 'Disponible à la vente' : 'Indisponible' }}</strong></div>
+            <div><span>Référence</span><strong>#{{ intrant.idIntrant }}</strong></div>
+          </div>
+        </div>
+        <section class="intrant-description">
+          <h3>Description</h3>
+          <p>{{ intrant.description || 'Aucune description renseignée.' }}</p>
+        </section>
+
+        <section class="supplier-card" aria-labelledby="intrant-supplier-title">
+          <div class="supplier-card__title">
+            <span class="supplier-card__icon"><mat-icon>storefront</mat-icon></span>
+            <div>
+              <span class="intrant-detail__eyebrow">FOURNISSEUR</span>
+              <h3 id="intrant-supplier-title">{{ intrant.nomFournisseur || 'Informations du fournisseur' }}</h3>
+            </div>
+          </div>
+          @if (fournisseurLoading()) {
+            <p class="supplier-message"><mat-icon>hourglass_top</mat-icon>Chargement des informations du fournisseur…</p>
+          } @else if (fournisseurError()) {
+            <p class="supplier-message supplier-message--error"><mat-icon>error_outline</mat-icon>Les informations du fournisseur n’ont pas pu être chargées.</p>
+          } @else {
+            @if (fournisseurDetails(); as fournisseur) {
+              <div class="supplier-facts">
+                <div><span>Nom complet</span><strong>{{ fournisseur.prenom }} {{ fournisseur.nom }}</strong></div>
+                <div><span>Entreprise</span><strong>{{ fournisseur.nomEntreprise || 'Non renseignée' }}</strong></div>
+                <div><span>Téléphone</span>
+                  @if (fournisseur.telephone) {
+                    <a [href]="'tel:' + fournisseur.telephone">{{ fournisseur.telephone }}</a>
+                  } @else {
+                    <strong>Non renseigné</strong>
+                  }
+                </div>
+                <div><span>E-mail</span>
+                  @if (fournisseur.email) {
+                    <a [href]="'mailto:' + fournisseur.email">{{ fournisseur.email }}</a>
+                  } @else {
+                    <strong>Non renseigné</strong>
+                  }
+                </div>
+                <div><span>Localisation</span><strong>{{ fournisseur.localisation || 'Non renseignée' }}</strong></div>
+                <div><span>Zone de vente</span><strong>{{ fournisseur.zoneDeVente || 'Non renseignée' }}</strong></div>
+                <div><span>Validation du compte</span><strong>{{ statusLabel(fournisseur.statutFournisseur) }}</strong></div>
+              </div>
+              @if (fournisseur.description) {
+                <p class="supplier-description">{{ fournisseur.description }}</p>
+              }
+            } @else {
+              <p class="supplier-message">Aucune information complémentaire disponible.</p>
+            }
+          }
+        </section>
+      </div>
+      <footer class="intrant-detail__footer">
+        <button type="button" class="btn btn-outline" (click)="closeDetails()">Fermer</button>
+      </footer>
+    </section>
+  </div>
+}

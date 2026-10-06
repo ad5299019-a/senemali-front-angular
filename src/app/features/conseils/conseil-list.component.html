@@ -1,0 +1,18 @@
+
+    <app-page-header title="Conseils agronomiques" subtitle="Contenus de conseil publiés par culture">
+      <a routerLink="nouveau" class="btn btn-primary">+ Nouveau conseil</a>
+    </app-page-header>
+
+    <app-data-table
+      [columns]="columns"
+      [rows]="rows()"
+      [loading]="loading()"
+      emptyTitle="Aucun conseil publié"
+      [rowActionsTemplate]="actionsTpl"
+    />
+
+    <ng-template #actionsTpl let-row>
+      <a class="btn btn-outline btn-sm" [routerLink]="[row.idConseil, 'modifier']">Modifier</a>
+      <button class="btn btn-danger btn-sm" (click)="remove(row)">Supprimer</button>
+    </ng-template>
+  

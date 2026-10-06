@@ -1,0 +1,23 @@
+
+    @if (confirmService.state(); as s) {
+      <div class="overlay" (click)="confirmService.respond(false)">
+        <div class="dialog" (click)="$event.stopPropagation()">
+          <h3>{{ s.title }}</h3>
+          <p>{{ s.message }}</p>
+          <div class="actions">
+            <button class="btn btn-outline" (click)="confirmService.respond(false)">
+              {{ s.cancelLabel ?? 'Annuler' }}
+            </button>
+            <button
+              class="btn"
+              [class.btn-danger]="s.danger"
+              [class.btn-primary]="!s.danger"
+              (click)="confirmService.respond(true)"
+            >
+              {{ s.confirmLabel ?? 'Confirmer' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  

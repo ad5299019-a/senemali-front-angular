@@ -1,0 +1,25 @@
+
+    <app-page-header title="Financements" subtitle="Offres de financement proposées par les partenaires">
+      <a routerLink="nouveau" class="btn btn-primary">+ Nouveau financement</a>
+    </app-page-header>
+
+    @if (filterPartenaireId()) {
+      <p class="filter-note text-muted">
+        Filtré pour un partenaire spécifique — <a routerLink="/financements">voir tous les financements</a>
+      </p>
+    }
+
+    <app-data-table [columns]="columns" [rows]="filteredRows()" [loading]="loading()" emptyTitle="Aucun financement" [rowActionsTemplate]="actionsTpl" />
+
+    <ng-template #statusTpl let-row>
+      <app-status-badge [label]="row.disponible ? 'Disponible' : 'Indisponible'" [tone]="row.disponible ? 'success' : 'muted'" />
+    </ng-template>
+
+    <ng-template #actionsTpl let-row>
+      <button class="btn btn-outline btn-sm" [disabled]="updatingIds().has(row.idFinancement)" (click)="toggleAvailability(row)">
+        {{ updatingIds().has(row.idFinancement) ? 'Mise à jour...' : (row.disponible ? 'Rendre indisponible' : 'Rendre disponible') }}
+      </button>
+      <a class="btn btn-outline btn-sm" [routerLink]="[row.idFinancement, 'modifier']">Modifier</a>
+      <button class="btn btn-danger btn-sm" (click)="remove(row)">Supprimer</button>
+    </ng-template>
+  

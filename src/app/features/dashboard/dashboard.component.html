@@ -1,0 +1,110 @@
+
+    <app-page-header [title]="pageTitle()" [subtitle]="welcomeMessage()" />
+
+    @if (loading()) {
+      <app-loading-spinner />
+    } @else {
+      @if (isAdmin() && adminStats(); as stats) {
+        <section class="activity-carousel" aria-label="Activités de la plateforme">
+          <img class="activity-carousel__image" [src]="carouselSlides[activeSlide()].image" [alt]="carouselSlides[activeSlide()].alt" [style.object-position]="carouselSlides[activeSlide()].position" />
+          <div class="activity-carousel__shade"></div>
+          <div class="activity-carousel__content">
+            <span class="activity-carousel__eyebrow">SENEMALI · ESPACE ADMINISTRATION</span>
+            <h2>{{ carouselSlides[activeSlide()].title }}</h2>
+            <p>{{ carouselSlides[activeSlide()].description }}</p>
+            <a class="activity-carousel__link" [routerLink]="carouselSlides[activeSlide()].link" [queryParams]="activeSlide() === 1 ? { tab: 'intrants' } : null">
+              {{ carouselSlides[activeSlide()].action }} <mat-icon>arrow_forward</mat-icon>
+            </a>
+          </div>
+          <div class="activity-carousel__controls">
+            <button type="button" aria-label="Image précédente" (click)="previousSlide()"><mat-icon>chevron_left</mat-icon></button>
+            <div class="activity-carousel__dots" aria-label="Choisir une image">
+              @for (slide of carouselSlides; track slide.image; let index = $index) {
+                <button type="button" [class.is-active]="index === activeSlide()" [attr.aria-label]="'Afficher : ' + slide.title" [attr.aria-current]="index === activeSlide() ? 'true' : null" (click)="activeSlide.set(index)"></button>
+              }
+            </div>
+            <button type="button" aria-label="Image suivante" (click)="nextSlide()"><mat-icon>chevron_right</mat-icon></button>
+          </div>
+        </section>
+
+        <div class="grid">
+          <app-stat-card icon="groups" iconBg="var(--color-primary-100)" [value]="stats.utilisateursActifs" label="Utilisateurs actifs" [detail]="userBreakdown()" />
+          <app-stat-card icon="account_balance" iconBg="var(--color-primary-100)" [value]="stats.totalFinanciers" label="Financiers" />
+          <app-stat-card icon="support_agent" iconBg="var(--color-primary-100)" [value]="stats.totalPrestataires" label="Prestataires" />
+          <app-stat-card icon="psychiatry" iconBg="var(--color-primary-100)" [value]="stats.totalCultures" label="Cultures" />
+          <app-stat-card icon="handyman" iconBg="var(--color-primary-100)" [value]="stats.totalServicesAgricoles" label="Services agricoles" />
+          <app-stat-card icon="package_2" iconBg="var(--color-primary-100)" [value]="stats.totalCommandes" label="Commandes" [detail]="ordersBreakdown()" />
+        </div>
+
+        <section class="card moderation">
+          <header class="moderation__header">
+            <div>
+              <h3>À traiter aujourd’hui</h3>
+              <p>File de modération</p>
+            </div>
+            <a routerLink="/validations">Tout voir <mat-icon>arrow_forward</mat-icon></a>
+          </header>
+          <div class="moderation__body">
+            @for (item of moderationItems().slice(0, 4); track item.id) {
+              <div class="moderation__item">
+                @if (item.imageUrl) {
+                  <img class="moderation__image" [src]="item.imageUrl" [alt]="item.title" />
+                } @else {
+                  <span class="moderation__avatar">
+                    @if (item.type === 'compte') { {{ item.initials }} } @else { <mat-icon>compost</mat-icon> }
+                  </span>
+                }
+                <span class="moderation__text"><strong>{{ item.title }}</strong><small>{{ item.detail }}</small></span>
+                <a routerLink="/validations" [queryParams]="{ tab: item.type === 'compte' ? 'comptes' : 'intrants' }" class="moderation__action">{{ item.action }}</a>
+              </div>
+            } @empty {
+              <p class="moderation__empty">Aucun compte ou intrant en attente de validation.</p>
+            }
+          </div>
+        </section>
+
+        <section class="card recent-orders">
+          <header class="recent-orders__header">
+            <div>
+              <h3>Achats récents</h3>
+              <p>Ventes de produits agricoles et d’intrants</p>
+            </div>
+            <a routerLink="/commandes">Toutes les commandes <mat-icon>arrow_forward</mat-icon></a>
+          </header>
+          <div class="recent-orders__body">
+            @for (order of recentOrders(); track order.idCommande) {
+              <a class="recent-orders__item" [routerLink]="['/commandes', order.idCommande]">
+                <span class="recent-orders__icon"><mat-icon>shopping_bag</mat-icon></span>
+                <span class="recent-orders__customer">
+                  <strong>{{ order.clientName }}</strong>
+                  <small>Commande #{{ order.idCommande }} · {{ order.dateLabel }}</small>
+                </span>
+                <span class="recent-orders__type">{{ order.category }}</span>
+                <span class="recent-orders__amount">{{ order.amountLabel }}</span>
+                <span class="recent-orders__status">{{ order.status }}</span>
+              </a>
+            } @empty {
+              <p class="recent-orders__empty">Aucune commande récente de produit agricole ou d’intrant.</p>
+            }
+          </div>
+        </section>
+      } @else {
+        @if (fournisseurStats(); as stats) {
+          <div class="grid">
+            <app-stat-card icon="compost" iconBg="var(--color-primary-100)" [value]="stats.totalIntrants" label="Mes intrants" />
+            <app-stat-card icon="task_alt" iconBg="var(--color-primary-100)" [value]="stats.intrantsValides" label="Validés" />
+            <app-stat-card icon="pending_actions" iconBg="var(--color-warning-50)" [value]="stats.intrantsEnAttente" label="En attente" />
+            <app-stat-card icon="block" iconBg="var(--color-danger-50)" [value]="stats.intrantsRefuses" label="Refusés" />
+          </div>
+
+          <div class="card shortcuts">
+            <h3>Actions rapides</h3>
+            <div class="shortcuts__grid">
+              <a routerLink="/mes-intrants" class="shortcut"><mat-icon>compost</mat-icon><span>Gérer mes intrants</span><mat-icon class="arrow">arrow_forward</mat-icon></a>
+              <a routerLink="/mon-profil" class="shortcut"><mat-icon>person</mat-icon><span>Modifier mon profil</span><mat-icon class="arrow">arrow_forward</mat-icon></a>
+            </div>
+          </div>
+        }
+      }
+    }
+  

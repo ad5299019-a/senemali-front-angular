@@ -1,0 +1,25 @@
+
+    <app-page-header title="Services agricoles" subtitle="Prestations proposées par les prestataires référencés">
+      <a routerLink="nouveau" class="btn btn-primary">+ Nouveau service</a>
+    </app-page-header>
+
+    @if (filterPrestataireId()) {
+      <p class="filter-note text-muted">
+        Filtré pour un prestataire spécifique — <a routerLink="/services-agricoles">voir tous les services</a>
+      </p>
+    }
+
+    <app-data-table [columns]="columns" [rows]="filteredRows()" [loading]="loading()" emptyTitle="Aucun service" [rowActionsTemplate]="actionsTpl" />
+
+    <ng-template #statusTpl let-row>
+      <app-status-badge [label]="row.disponible ? 'Disponible' : 'Indisponible'" [tone]="row.disponible ? 'success' : 'muted'" />
+    </ng-template>
+
+    <ng-template #actionsTpl let-row>
+      <button class="btn btn-outline btn-sm" [disabled]="updatingIds().has(row.idService)" (click)="toggleAvailability(row)">
+        {{ updatingIds().has(row.idService) ? 'Mise à jour...' : (row.disponible ? 'Rendre indisponible' : 'Rendre disponible') }}
+      </button>
+      <a class="btn btn-outline btn-sm" [routerLink]="[row.idService, 'modifier']">Modifier</a>
+      <button class="btn btn-danger btn-sm" (click)="remove(row)">Supprimer</button>
+    </ng-template>
+  

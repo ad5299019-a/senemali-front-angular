@@ -1,0 +1,25 @@
+
+    <app-page-header [title]="isEdit() ? 'Modifier la catégorie' : 'Nouvelle catégorie'">
+      <a routerLink="/categories-cultures" class="btn btn-outline">← Retour à la liste</a>
+    </app-page-header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
+      <div class="field">
+        <label>Nom de la catégorie</label>
+        <input class="input" formControlName="nomCategorie" placeholder="Ex : Céréales" [class.invalid]="isInvalid('nomCategorie')" />
+        @if (isInvalid('nomCategorie')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="field">
+        <label>Description</label>
+        <textarea class="textarea" formControlName="description" placeholder="Optionnel"></textarea>
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer' : 'Créer') }}
+        </button>
+        <a routerLink="/categories-cultures" class="btn btn-ghost">Annuler</a>
+      </div>
+    </form>
+  

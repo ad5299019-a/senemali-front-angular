@@ -1,0 +1,53 @@
+
+    <app-page-header [title]="isEdit() ? 'Modifier le financement' : 'Nouveau financement'">
+      <a routerLink="/financements" class="btn btn-outline">← Retour à la liste</a>
+    </app-page-header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
+      <div class="field">
+        <label>Partenaire</label>
+        <select class="select" formControlName="idPartenaire" [class.invalid]="isInvalid('idPartenaire')">
+          <option [ngValue]="null" disabled>Choisir un partenaire</option>
+          @for (p of partenaires(); track p.idPartenaire) {
+            <option [ngValue]="p.idPartenaire">{{ p.nomPartenaire }}</option>
+          }
+        </select>
+        @if (isInvalid('idPartenaire')) { <span class="error">Choisissez un partenaire</span> }
+      </div>
+
+      <div class="field">
+        <label>Type de financement</label>
+        <input class="input" formControlName="typeFinancement" placeholder="Ex : Crédit de campagne" [class.invalid]="isInvalid('typeFinancement')" />
+        @if (isInvalid('typeFinancement')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Montant min (FCFA)</label>
+          <input class="input" type="number" min="0" formControlName="montantMin" [class.invalid]="isInvalid('montantMin')" />
+        </div>
+        <div class="field">
+          <label>Montant max (FCFA)</label>
+          <input class="input" type="number" min="0" formControlName="montantMax" [class.invalid]="isInvalid('montantMax')" />
+        </div>
+      </div>
+      @if (form.errors?.['montantRange']) { <p class="error" style="margin-top:-10px">Le montant max doit être supérieur au montant min</p> }
+
+      <div class="field">
+        <label>Conditions principales</label>
+        <textarea class="textarea" formControlName="conditionPrincipales"></textarea>
+      </div>
+
+      <label class="checkbox-field">
+        <input type="checkbox" formControlName="disponible" />
+        Disponible immédiatement
+      </label>
+
+      <div class="flex gap-2" style="margin-top: 16px;">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer' : 'Créer') }}
+        </button>
+        <a routerLink="/financements" class="btn btn-ghost">Annuler</a>
+      </div>
+    </form>
+  

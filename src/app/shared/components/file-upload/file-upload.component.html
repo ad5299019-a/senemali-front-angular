@@ -1,0 +1,22 @@
+
+    <div class="uploader" [class.dragging]="dragging()" (dragover)="onDragOver($event)" (dragleave)="dragging.set(false)" (drop)="onDrop($event)">
+      @if (previewUrl(); as preview) {
+        @if (previewIsVideo()) {
+          <video [src]="preview" class="preview" controls aria-label="Aperçu de la vidéo"></video>
+        } @else {
+          <img [src]="preview" class="preview" alt="Aperçu" />
+        }
+        <button type="button" class="btn btn-outline btn-sm remove" (click)="clear()">Retirer</button>
+      } @else {
+        <label class="dropzone">
+          <input type="file" [accept]="videosEnabled() ? 'image/*,video/*' : 'image/*'" hidden (change)="onFileSelected($event)" />
+          <mat-icon class="icon" aria-hidden="true">add_photo_alternate</mat-icon>
+          <span class="text">{{ videosEnabled() ? 'Ajoutez une image ou une vidéo' : 'Glissez une image ici ou cliquez pour choisir' }}</span>
+          <span class="hint text-subtle">{{ videosEnabled() ? 'Images : 10 Mo max · Vidéos : 100 Mo max' : 'JPG, PNG — 10 Mo max' }}</span>
+        </label>
+      }
+      @if (uploading()) {
+        <div class="uploading-overlay">Envoi en cours...</div>
+      }
+    </div>
+  

@@ -1,0 +1,96 @@
+
+    <div class="auth-card">
+      <h1>Créer un compte fournisseur</h1>
+      <p class="intro">Créez votre espace pour rejoindre les acteurs de l'agriculture malienne.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="register-grid">
+          <section class="register-section">
+            <h2>Vos informations</h2>
+            <div class="field">
+              <label>Photo de profil <span class="optional">(facultatif)</span></label>
+              <app-file-upload folder="profils" (uploaded)="form.patchValue({ photoProfil: $event })" />
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label>Nom</label>
+                <input class="input" formControlName="nom" [class.invalid]="isInvalid('nom')" />
+              </div>
+              <div class="field">
+                <label>Prénom</label>
+                <input class="input" formControlName="prenom" [class.invalid]="isInvalid('prenom')" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Email <span class="optional">(facultatif)</span></label>
+              <input class="input" type="email" formControlName="email" [class.invalid]="isInvalid('email')" />
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label>Téléphone</label>
+                <input class="input" formControlName="telephone" placeholder="+223 7X XX XX XX" [class.invalid]="isInvalid('telephone')" />
+              </div>
+              <div class="field">
+                <label>Localisation</label>
+                <input class="input" formControlName="localisation" placeholder="Ville, région" [class.invalid]="isInvalid('localisation')" />
+              </div>
+            </div>
+          </section>
+
+          <section class="register-section">
+            <h2>Votre activité</h2>
+            <div class="field">
+              <label>Nom de l'entreprise</label>
+              <input class="input" formControlName="nomEntreprise" placeholder="Optionnel" />
+            </div>
+
+            <div class="field">
+              <label>Zone de vente</label>
+              <input class="input" formControlName="zoneDeVente" placeholder="Optionnel" />
+            </div>
+
+            <div class="field">
+              <label>Description de votre activité</label>
+              <textarea class="textarea" formControlName="descriptionFournisseur" placeholder="Optionnel"></textarea>
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label>Mot de passe</label>
+                <input class="input" type="password" formControlName="motDePasse" [class.invalid]="isInvalid('motDePasse')" />
+              </div>
+              <div class="field">
+                <label>Confirmation</label>
+                <input class="input" type="password" formControlName="confirmation" [class.invalid]="passwordMismatch()" />
+                @if (passwordMismatch()) { <span class="error">Les mots de passe ne correspondent pas</span> }
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <button class="btn btn-primary w-full create-button" type="submit" [disabled]="loading()">
+          {{ loading() ? 'Création...' : 'Créer mon compte' }}
+        </button>
+      </form>
+
+      <div class="separator"><span>ou s'inscrire avec</span></div>
+      <button class="google-button w-full" type="button" (click)="googleSignInInfo()">
+        <svg aria-hidden="true" viewBox="0 0 48 48">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.25 5.48-4.72 7.18l7.62 5.91c4.45-4.1 7.14-10.15 7.14-17.56Z"/>
+          <path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.98 23.98 0 0 0 0 21.56l7.98-6.19Z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.89l-7.62-5.91c-2.13 1.43-4.86 2.27-8.28 2.27-6.27 0-11.58-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"/>
+        </svg>
+        S'inscrire avec Google
+      </button>
+      <p class="google-note">L'inscription Google sera disponible après la configuration du service.</p>
+
+      <p class="approval-note">Votre compte restera en attente jusqu'à sa validation par un administrateur.</p>
+      <p class="switch text-muted">
+        Déjà un compte ? <a routerLink="/auth/login">Se connecter</a>
+      </p>
+    </div>
+  

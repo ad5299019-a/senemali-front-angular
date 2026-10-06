@@ -1,0 +1,224 @@
+.tutorial-form-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  align-items: stretch;
+  gap: 22px;
+}
+
+
+.tutorial-form {
+  min-width: 0;
+  padding: 30px;
+}
+
+.form-heading {
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  color: var(--color-primary-500);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.form-heading h1 {
+  margin-top: 6px;
+  color: var(--color-text);
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.form-heading p,
+.media-hint {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.form-heading p {
+  margin-top: 6px;
+}
+
+.optional {
+  color: var(--color-text-subtle);
+  font-weight: 500;
+}
+
+.media-field app-file-upload {
+  display: block;
+}
+
+.media-field ::ng-deep .uploader {
+  min-height: 128px;
+  border-color: #c9ddce;
+  background: var(--color-primary-50);
+}
+
+.media-field ::ng-deep .dropzone {
+  padding: 16px;
+}
+
+.media-field ::ng-deep .preview {
+  max-height: 220px;
+}
+
+.media-hint {
+  display: block;
+  margin-top: 12px;
+}
+
+.field .input,
+.field .select,
+.field .textarea {
+  width: 100%;
+}
+
+.field .textarea {
+  min-height: 110px;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.tutorial-aside {
+  position: relative;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, #f7faf8 10%, #e2f2e6 100%);
+  box-shadow: var(--shadow-sm);
+}
+
+.tutorial-aside__art {
+  position: relative;
+  min-height: 330px;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.tutorial-aside__art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 57%;
+}
+
+.floating-leaf {
+  position: absolute;
+  width: 20px;
+  height: 34px;
+  border-radius: 100% 0 100% 0;
+  background: var(--color-brand-green);
+  box-shadow: 0 6px 14px rgba(35, 122, 59, 0.2);
+  animation: leaf-drift 4s ease-in-out infinite;
+}
+
+.leaf-one {
+  top: 19%;
+  right: 16%;
+}
+
+.leaf-two {
+  top: 38%;
+  left: 13%;
+  width: 15px;
+  height: 25px;
+  background: #237a3b;
+  animation-delay: -1.2s;
+}
+
+.leaf-three {
+  right: 28%;
+  bottom: 14%;
+  width: 13px;
+  height: 22px;
+  background: #8ccf78;
+  animation-delay: -2.3s;
+}
+
+.tutorial-aside__copy {
+  position: relative;
+  z-index: 1;
+  padding: 22px 24px 26px;
+  background: linear-gradient(180deg, rgba(247, 250, 248, 0), #f7faf8 16%);
+}
+
+.tutorial-aside__copy h2 {
+  max-width: 390px;
+  margin-top: 8px;
+  color: #237a3b;
+  font-size: clamp(20px, 2vw, 27px);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.tutorial-aside__copy p {
+  max-width: 400px;
+  margin-top: 9px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@keyframes leaf-drift {
+  0%, 100% { transform: translateY(0) rotate(-10deg); }
+  50% { transform: translateY(-12px) rotate(8deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-leaf {
+    animation: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .tutorial-form-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tutorial-aside {
+    min-height: 320px;
+  }
+
+  .tutorial-aside__art {
+    position: absolute;
+    inset: 0;
+    min-height: 0;
+  }
+
+  .tutorial-aside__copy {
+    align-self: flex-start;
+    width: min(100%, 480px);
+    margin-top: auto;
+    border-radius: 0 14px 0 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .tutorial-form {
+    padding: 18px;
+  }
+
+  .form-actions > * {
+    flex: 1;
+  }
+
+  .tutorial-aside {
+    min-height: 280px;
+  }
+
+  .tutorial-aside__copy {
+    padding: 18px;
+  }
+}

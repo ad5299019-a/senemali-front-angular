@@ -1,0 +1,9 @@
+
+    .list { display: flex; flex-direction: column; gap: 10px; }
+    .notif { display: flex; justify-content: space-between; gap: 16px; padding: 16px 18px; }
+    .notif--unread { border-left: 3px solid var(--color-primary-500); }
+    .notif__top { display: flex; align-items: center; gap: 10px; font-size: 12px; margin-bottom: 6px; }
+    .notif__title { font-weight: 700; font-size: 13.5px; }
+    .notif__message { font-size: 13px; margin-top: 3px; }
+    .notif__actions { display: flex; flex-direction: column; gap: 6px; flex: none; }
+  

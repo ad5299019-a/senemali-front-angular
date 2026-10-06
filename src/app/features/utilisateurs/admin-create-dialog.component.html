@@ -1,0 +1,67 @@
+<div class="dialog-backdrop" role="presentation" (click)="close()" (keydown.escape)="close()">
+  <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="admin-form-title" (click)="$event.stopPropagation()">
+    <header class="dialog__header">
+      <span class="dialog__icon"><mat-icon aria-hidden="true">admin_panel_settings</mat-icon></span>
+      <div class="dialog__heading">
+        <span class="dialog__eyebrow">GESTION DES ACCÈS</span>
+        <h2 id="admin-form-title">Ajouter un administrateur</h2>
+        <p>Renseignez les informations du nouveau compte administrateur.</p>
+      </div>
+      <button type="button" class="dialog__close" aria-label="Fermer" [disabled]="creating()" (click)="close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="dialog__body">
+        <div class="field">
+          <label>Photo de profil <span class="optional">(facultatif)</span></label>
+          <app-file-upload folder="profils" (uploaded)="form.patchValue({ photoProfil: $event })" />
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="admin-nom">Nom</label>
+            <input id="admin-nom" class="input" formControlName="nom" [class.invalid]="form.controls.nom.invalid && form.controls.nom.touched" />
+          </div>
+          <div class="field">
+            <label for="admin-prenom">Prénom</label>
+            <input id="admin-prenom" class="input" formControlName="prenom" [class.invalid]="form.controls.prenom.invalid && form.controls.prenom.touched" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="admin-email">Adresse e-mail</label>
+          <input id="admin-email" class="input" type="email" formControlName="email" [class.invalid]="form.controls.email.invalid && form.controls.email.touched" />
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="admin-telephone">Téléphone</label>
+            <input id="admin-telephone" class="input" type="tel" formControlName="telephone" placeholder="+223" [class.invalid]="form.controls.telephone.invalid && form.controls.telephone.touched" />
+          </div>
+          <div class="field">
+            <label for="admin-localisation">Localisation</label>
+            <input id="admin-localisation" class="input" formControlName="localisation" placeholder="Ville, région" [class.invalid]="form.controls.localisation.invalid && form.controls.localisation.touched" />
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="admin-password">Mot de passe (6 caractères minimum)</label>
+            <input id="admin-password" class="input" type="password" formControlName="motDePasse" [class.invalid]="form.controls.motDePasse.invalid && form.controls.motDePasse.touched" />
+          </div>
+          <div class="field">
+            <label for="admin-confirmation">Confirmer le mot de passe</label>
+            <input id="admin-confirmation" class="input" type="password" formControlName="confirmation" [class.invalid]="passwordMismatch()" />
+            @if (passwordMismatch()) {
+              <small class="dialog__error">Les mots de passe ne correspondent pas.</small>
+            }
+          </div>
+        </div>
+      </div>
+      <footer class="dialog__footer">
+        <button type="button" class="btn btn-outline" [disabled]="creating()" (click)="close()">Annuler</button>
+        <button type="submit" class="btn btn-primary" [disabled]="creating()">
+          <mat-icon>{{ creating() ? 'hourglass_top' : 'person_add' }}</mat-icon>
+          {{ creating() ? 'Création…' : 'Créer le compte' }}
+        </button>
+      </footer>
+    </form>
+  </section>
+</div>

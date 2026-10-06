@@ -1,0 +1,30 @@
+
+    <app-page-header title="Cultures" subtitle="Cultures suivies sur la plateforme (mil, maïs, riz, coton...)">
+      <a routerLink="nouveau" class="btn btn-primary">+ Nouvelle culture</a>
+    </app-page-header>
+
+    <app-data-table
+      [columns]="columns"
+      [rows]="rows()"
+      [loading]="loading()"
+      emptyTitle="Aucune culture"
+      emptyDescription="Ajoutez d'abord une catégorie, puis créez vos cultures."
+      [rowActionsTemplate]="actionsTpl"
+    />
+
+    <ng-template #cultureNameTpl let-row>
+      <span class="culture-name">
+        @if (imageUrl(row.imageUrl); as src) {
+          <img class="culture-name__image" [src]="src" [alt]="row.nomCulture" />
+        } @else {
+          <span class="culture-name__placeholder"><mat-icon aria-hidden="true">spa</mat-icon></span>
+        }
+        <strong>{{ row.nomCulture }}</strong>
+      </span>
+    </ng-template>
+
+    <ng-template #actionsTpl let-row>
+      <a class="btn btn-outline btn-sm" [routerLink]="[row.idCulture, 'modifier']">Modifier</a>
+      <button class="btn btn-danger btn-sm" (click)="remove(row)">Supprimer</button>
+    </ng-template>
+  

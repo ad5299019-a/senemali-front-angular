@@ -1,0 +1,34 @@
+
+    <app-page-header title="Mes notifications" subtitle="Alertes et informations qui vous concernent">
+      @if (rows().length > 0) {
+        <button class="btn btn-outline" (click)="markAllAsLue()">Tout marquer comme lu</button>
+      }
+    </app-page-header>
+
+    @if (loading()) {
+      <app-loading-spinner />
+    } @else if (rows().length === 0) {
+      <app-empty-state icon="🔔" title="Aucune notification" description="Vous serez notifié ici des mises à jour importantes." />
+    } @else {
+      <div class="list">
+        @for (n of rows(); track n.idNotification) {
+          <div class="card notif" [class.notif--unread]="!n.lue">
+            <div class="notif__body">
+              <div class="notif__top">
+                <span class="badge badge-info">{{ typeLabel(n) }}</span>
+                <span class="text-subtle">{{ formatDate(n.dateEnvoi) }}</span>
+              </div>
+              <p class="notif__title">{{ n.titre }}</p>
+              <p class="notif__message text-muted">{{ n.message }}</p>
+            </div>
+            <div class="notif__actions">
+              @if (!n.lue) {
+                <button class="btn btn-ghost btn-sm" (click)="markAsLue(n)">Marquer comme lu</button>
+              }
+              <button class="btn btn-danger btn-sm" (click)="remove(n)">Supprimer</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  

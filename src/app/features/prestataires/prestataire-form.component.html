@@ -1,0 +1,56 @@
+
+    <app-page-header [title]="isEdit() ? 'Modifier le prestataire' : 'Nouveau prestataire'">
+      <a routerLink="/prestataires" class="btn btn-outline">← Retour à la liste</a>
+    </app-page-header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
+      <div class="field">
+        <label>Photo</label>
+        <app-file-upload folder="services" [initialUrl]="form.controls.imageUrl.value" (uploaded)="form.patchValue({ imageUrl: $event })" />
+      </div>
+
+      <div class="field">
+        <label>Nom</label>
+        <input class="input" formControlName="nomPrestataire" [class.invalid]="isInvalid('nomPrestataire')" />
+        @if (isInvalid('nomPrestataire')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="field">
+        <label>Type</label>
+        <select class="select" formControlName="typePrestataire">
+          @for (t of typeOptions; track t.value) {
+            <option [ngValue]="t.value">{{ t.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Spécialité</label>
+        <input class="input" formControlName="specialite" placeholder="Ex : Maraîchage, aviculture..." [class.invalid]="isInvalid('specialite')" />
+        @if (isInvalid('specialite')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Téléphone</label>
+          <input class="input" formControlName="telephone" [class.invalid]="isInvalid('telephone')" />
+        </div>
+        <div class="field">
+          <label>Localisation</label>
+          <input class="input" formControlName="localisation" [class.invalid]="isInvalid('localisation')" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Description</label>
+        <textarea class="textarea" formControlName="description"></textarea>
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer' : 'Créer') }}
+        </button>
+        <a routerLink="/prestataires" class="btn btn-ghost">Annuler</a>
+      </div>
+    </form>
+  

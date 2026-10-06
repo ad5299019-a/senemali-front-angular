@@ -1,0 +1,52 @@
+
+    <app-page-header [title]="isEdit() ? 'Modifier le service' : 'Nouveau service agricole'">
+      <a routerLink="/services-agricoles" class="btn btn-outline">← Retour à la liste</a>
+    </app-page-header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
+      <div class="field">
+        <label>Image</label>
+        <app-file-upload folder="services" [initialUrl]="form.controls.imageUrl.value" (uploaded)="form.patchValue({ imageUrl: $event })" />
+      </div>
+
+      <div class="field">
+        <label>Prestataire</label>
+        <select class="select" formControlName="idPrestataire" [class.invalid]="isInvalid('idPrestataire')">
+          <option [ngValue]="null" disabled>Choisir un prestataire</option>
+          @for (p of prestataires(); track p.idPrestataire) {
+            <option [ngValue]="p.idPrestataire">{{ p.nomPrestataire }}</option>
+          }
+        </select>
+        @if (isInvalid('idPrestataire')) { <span class="error">Choisissez un prestataire</span> }
+      </div>
+
+      <div class="field">
+        <label>Type de service</label>
+        <input class="input" formControlName="typeService" placeholder="Ex : Labour mécanisé" [class.invalid]="isInvalid('typeService')" />
+        @if (isInvalid('typeService')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="field">
+        <label>Coût estimé</label>
+        <input class="input" formControlName="coutEstime" placeholder="Ex : 15 000 FCFA / hectare" [class.invalid]="isInvalid('coutEstime')" />
+        @if (isInvalid('coutEstime')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="field">
+        <label>Description</label>
+        <textarea class="textarea" formControlName="description"></textarea>
+      </div>
+
+      <label class="checkbox-field">
+        <input type="checkbox" formControlName="disponible" />
+        Disponible
+      </label>
+
+      <div class="flex gap-2" style="margin-top: 16px;">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer' : 'Créer') }}
+        </button>
+        <a routerLink="/services-agricoles" class="btn btn-ghost">Annuler</a>
+      </div>
+    </form>
+  

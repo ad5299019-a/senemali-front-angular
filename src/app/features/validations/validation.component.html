@@ -1,0 +1,127 @@
+
+    <app-page-header title="File de validation" subtitle="Validez les intrants fournisseurs et les nouveaux comptes">
+      <span class="pending-count"><span></span>{{ pendingCount() }} éléments en attente</span>
+    </app-page-header>
+
+    <nav class="tabs" aria-label="Sections de validation">
+      <button type="button" [class.active]="activeTab() === 'intrants'" (click)="activeTab.set('intrants')">
+        <mat-icon>compost</mat-icon> Fiches produit <span class="tab-count">{{ pendingIntrants().length }}</span>
+      </button>
+      <button type="button" [class.active]="activeTab() === 'comptes'" (click)="activeTab.set('comptes')">
+        <mat-icon>groups</mat-icon> Comptes <span class="tab-count">{{ accountsToReview().length }}</span>
+      </button>
+    </nav>
+
+    @if (activeTab() === 'intrants') {
+      <section class="panel card">
+        <header class="panel-heading">
+          <div>
+            <h2>Intrants à vérifier</h2>
+            <p>Contrôlez les fiches avant leur publication sur la plateforme.</p>
+          </div>
+          <label class="status-filter">
+            <span>Afficher</span>
+            <select [value]="intrantFilter()" (change)="setIntrantFilter($event)">
+              <option value="EN_ATTENTE">En attente</option>
+              <option value="VALIDE">Validés</option>
+              <option value="REFUSE">Refusés</option>
+              <option value="TOUS">Tous</option>
+            </select>
+          </label>
+        </header>
+
+        @if (intrantsLoading()) {
+          <div class="empty"><mat-icon>hourglass_top</mat-icon><span>Chargement des intrants…</span></div>
+        } @else if (filteredIntrants().length === 0) {
+          <div class="empty"><mat-icon>inbox</mat-icon><span>Aucun intrant dans cette catégorie.</span></div>
+        } @else {
+          <div class="intrant-grid">
+            @for (intrant of filteredIntrants(); track intrant.idIntrant) {
+              <article class="intrant-card">
+                <div class="intrant-main">
+                  @if (imageUrl(intrant); as src) {
+                    <img class="intrant-image" [src]="src" [alt]="intrant.nomIntrant" />
+                  } @else {
+                    <div class="intrant-image intrant-image--placeholder"><mat-icon>compost</mat-icon></div>
+                  }
+                  <div class="intrant-info">
+                    <strong>{{ intrant.nomIntrant }}</strong>
+                    <span>{{ intrant.nomFournisseur || 'Fournisseur' }} · {{ intrant.typeIntrant }}</span>
+                    <div class="intrant-facts">
+                      <span>Prix <b>{{ intrant.prix | number:'1.0-0' }} FCFA</b></span>
+                      <span>Stock <b>{{ intrant.quantite != null ? (intrant.quantite + ' unités') : (intrant.disponible ? 'Quantité non renseignée' : 'Indisponible') }}</b></span>
+                    </div>
+                  </div>
+                </div>
+                @if (intrant.description) {
+                  <p class="intrant-description">{{ intrant.description }}</p>
+                }
+                <footer class="intrant-actions">
+                  <span class="intrant-status" [class.status--done]="intrant.statutIntrant === StatutFournisseur.VALIDE" [class.status--cancelled]="intrant.statutIntrant === StatutFournisseur.REFUSE">
+                    <span></span>{{ statutLabel(intrant.statutIntrant) }}
+                  </span>
+                  @if (intrant.statutIntrant === StatutFournisseur.EN_ATTENTE) {
+                    <button type="button" class="btn btn-outline btn-sm reject" [disabled]="isIntrantProcessing(intrant)" (click)="reviewIntrant(intrant, StatutFournisseur.REFUSE)">
+                      <mat-icon>close</mat-icon> Refuser
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" [disabled]="isIntrantProcessing(intrant)" (click)="reviewIntrant(intrant, StatutFournisseur.VALIDE)">
+                      <mat-icon>check</mat-icon> Publier
+                    </button>
+                  }
+                </footer>
+              </article>
+            }
+          </div>
+        }
+      </section>
+    } @else {
+      <section class="panel card">
+        <header class="panel-heading">
+          <div>
+            <h2>Comptes à vérifier</h2>
+            <p>Validez les fournisseurs et activez leur compte pour autoriser la connexion.</p>
+          </div>
+        </header>
+
+        @if (accountsLoading()) {
+          <div class="empty"><mat-icon>hourglass_top</mat-icon><span>Chargement des comptes…</span></div>
+        } @else if (accountsLoadError()) {
+          <div class="empty empty--error"><mat-icon>error_outline</mat-icon><span>La liste des fournisseurs n’a pas pu être chargée.</span></div>
+        } @else if (accountsToReview().length === 0) {
+          <div class="empty"><mat-icon>task_alt</mat-icon><span>Aucun compte en attente de validation.</span></div>
+        } @else {
+          <div class="account-list">
+            @if (supplierProfilesLoadError()) {
+              <p class="account-list__notice">Les profils fournisseurs sont indisponibles. Les comptes repérés dans les utilisateurs restent affichés.</p>
+            }
+            @for (account of accountsToReview(); track account.user.id) {
+              <article class="account-row">
+                <div class="avatar">{{ initials(account.user) }}</div>
+                <div class="account-info">
+                  <strong>{{ account.user.prenom }} {{ account.user.nom }}</strong>
+                  <span>{{ account.supplier?.nomEntreprise || 'Fournisseur' }} · {{ account.user.localisation || 'Localisation non renseignée' }}</span>
+                </div>
+                <div class="account-status">
+                  <span class="status" [class.status--done]="account.user.statut">
+                    <span></span>{{ account.user.statut ? 'Compte actif' : 'Compte désactivé' }}
+                  </span>
+                  <small>{{ account.supplier ? accountStatus(account.supplier.statutFournisseur) : (account.user.statut ? 'Profil fournisseur non associé' : 'Profil fournisseur à activer') }}</small>
+                </div>
+                <div class="account-actions">
+                  @if (account.supplier) {
+                    <button type="button" class="btn btn-outline btn-sm reject" [disabled]="isAccountProcessing(account)" (click)="reviewAccount(account, StatutFournisseur.REFUSE)">
+                      Refuser
+                    </button>
+                  }
+                  <button type="button" class="btn btn-primary btn-sm" [disabled]="isAccountProcessing(account) || (!account.supplier && account.user.statut)" (click)="reviewAccount(account, StatutFournisseur.VALIDE)">
+                    <mat-icon>{{ account.supplier?.statutFournisseur === StatutFournisseur.VALIDE ? 'person_check' : 'check' }}</mat-icon>
+                    {{ account.supplier?.statutFournisseur === StatutFournisseur.VALIDE ? 'Activer' : (account.supplier ? 'Approuver' : (account.user.statut ? 'Profil manquant' : 'Activer')) }}
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </section>
+    }
+  

@@ -1,0 +1,9 @@
+
+    <app-page-header title="Acheteurs" subtitle="Acheteurs inscrits sur la plateforme (lecture seule — gérés via l'app mobile)" />
+
+    <app-data-table [columns]="columns" [rows]="rows()" [loading]="loading()" emptyTitle="Aucun acheteur inscrit" [rowActionsTemplate]="actionsTpl" />
+
+    <ng-template #actionsTpl let-row>
+      <button class="btn btn-danger btn-sm" (click)="remove(row)">Supprimer</button>
+    </ng-template>
+  

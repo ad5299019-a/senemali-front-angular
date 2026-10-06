@@ -1,0 +1,50 @@
+
+    <app-page-header [title]="isEdit() ? 'Modifier le partenaire' : 'Nouveau partenaire financier'">
+      <a routerLink="/partenaires" class="btn btn-outline">← Retour à la liste</a>
+    </app-page-header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
+      <div class="field">
+        <label>Logo / image</label>
+        <app-file-upload folder="services" [initialUrl]="form.controls.imageUrl.value" (uploaded)="form.patchValue({ imageUrl: $event })" />
+      </div>
+
+      <div class="field">
+        <label>Nom du partenaire</label>
+        <input class="input" formControlName="nomPartenaire" [class.invalid]="isInvalid('nomPartenaire')" />
+        @if (isInvalid('nomPartenaire')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="field">
+        <label>Type</label>
+        <select class="select" formControlName="typepartenaire">
+          @for (t of typeOptions; track t.value) {
+            <option [ngValue]="t.value">{{ t.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Téléphone</label>
+          <input class="input" formControlName="telephone" />
+        </div>
+        <div class="field">
+          <label>Localisation</label>
+          <input class="input" formControlName="localisation" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Description</label>
+        <textarea class="textarea" formControlName="description"></textarea>
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer' : 'Créer') }}
+        </button>
+        <a routerLink="/partenaires" class="btn btn-ghost">Annuler</a>
+      </div>
+    </form>
+  

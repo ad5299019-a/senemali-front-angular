@@ -1,0 +1,69 @@
+<app-page-header [title]="isEdit() ? 'Modifier le tutoriel' : 'Créer un tutoriel'">
+  <a routerLink="/tutoriels" class="btn btn-outline">← Retour à la liste</a>
+</app-page-header>
+
+<div class="tutorial-form-layout">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="card tutorial-form">
+    <div class="form-heading">
+      <!-- `<span class="eyebrow">PARTAGEZ VOTRE SAVOIR-FAIRE</span> -->
+      <h1>{{ isEdit() ? 'Mettre à jour le guide' : 'Nouveau guide agricole' }}</h1>
+      <p>Ajoutez un tutoriel clair et pratique pour accompagner les producteurs.</p>
+    </div>
+
+    <div class="field media-field">
+      <label>Visuel ou vidéo du tutoriel <span class="optional">(facultatif)</span></label>
+      <app-file-upload
+        folder="tutoriels"
+        [videosEnabled]="true"
+        [initialUrl]="mediaInitialUrl()"
+        (uploaded)="clearMediaIfEmpty($event)"
+        (mediaUploaded)="setMedia($event)"
+      />
+      <span class="media-hint">Une image ou une vidéo suffit. L’ajout d’un fichier remplacera le média actuel.</span>
+    </div>
+
+    <div class="field">
+      <label for="titreTutoriel">Titre du tutoriel</label>
+      <input id="titreTutoriel" class="input" formControlName="titreTutoriel" placeholder="Ex. Réussir le semis du mil" [class.invalid]="isInvalid('titreTutoriel')" />
+      @if (isInvalid('titreTutoriel')) { <span class="error">Ce champ est requis</span> }
+    </div>
+
+    <div class="field">
+      <label for="idCategorie">Culture concernée</label>
+      <select id="idCategorie" class="select" formControlName="idCategorie" [class.invalid]="isInvalid('idCategorie')">
+        <option [ngValue]="null" disabled>Choisir une catégorie</option>
+        @for (c of categories(); track c.idCategorie) {
+          <option [ngValue]="c.idCategorie">{{ c.nomCategorie }}</option>
+        }
+      </select>
+      @if (isInvalid('idCategorie')) { <span class="error">Choisissez une catégorie</span> }
+    </div>
+
+    <div class="field">
+      <label for="descriptionTutoriel">Description et étapes</label>
+      <textarea id="descriptionTutoriel" class="textarea" formControlName="descriptionTutoriel" rows="4" placeholder="Décrivez les étapes, le matériel nécessaire et les conseils utiles..." [class.invalid]="isInvalid('descriptionTutoriel')"></textarea>
+      @if (isInvalid('descriptionTutoriel')) { <span class="error">Ce champ est requis</span> }
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="saving()">
+        {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer les changements' : 'Publier le tutoriel') }}
+      </button>
+      <a routerLink="/tutoriels" class="btn btn-ghost">Annuler</a>
+    </div>
+  </form>
+
+  <aside class="tutorial-aside" aria-label="Illustration des cultures agricoles">
+    <div class="tutorial-aside__art">
+      <img src="/culture-illustration.svg" alt="" />
+      <span class="floating-leaf leaf-one"></span>
+      <span class="floating-leaf leaf-two"></span>
+      <span class="floating-leaf leaf-three"></span>
+    </div>
+    <div class="tutorial-aside__copy">
+      <span class="eyebrow">APPRENDRE · CULTIVER · GRANDIR</span>
+      <h2>Un bon conseil fait pousser de grandes récoltes.</h2>
+      <p>Transmettez vos techniques avec des explications simples, illustrées par une photo ou une vidéo.</p>
+    </div>
+  </aside>
+</div>

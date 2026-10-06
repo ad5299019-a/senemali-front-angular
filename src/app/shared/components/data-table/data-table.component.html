@@ -1,0 +1,56 @@
+
+    <div class="table-card card">
+      @if (loading()) {
+        <app-loading-spinner label="Chargement des données..." />
+      } @else if (rows().length === 0) {
+        <app-empty-state icon="🗂️" [title]="emptyTitle()" [description]="emptyDescription()" />
+      } @else {
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                @for (col of columns(); track col.header) {
+                  <th [style.width]="col.width" [style.textAlign]="col.align ?? 'left'">{{ col.header }}</th>
+                }
+                @if (showActions()) { <th class="actions-col">Actions</th> }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of pagedRows(); track trackBy()(row)) {
+                <tr>
+                  @for (col of columns(); track col.header) {
+                    <td [style.textAlign]="col.align ?? 'left'">
+                      @if (col.cellTemplate) {
+                        <ng-container [ngTemplateOutlet]="col.cellTemplate" [ngTemplateOutletContext]="{ $implicit: row }" />
+                      } @else {
+                        {{ col.accessor(row) ?? '—' }}
+                      }
+                    </td>
+                  }
+                  @if (showActions()) {
+                    <td class="actions-col">
+                      <div class="row-actions">
+                        <ng-container [ngTemplateOutlet]="rowActionsTemplate() ?? null" [ngTemplateOutletContext]="{ $implicit: row }" />
+                      </div>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (totalPages() > 1) {
+          <div class="pagination">
+            <span class="text-muted">
+              {{ rows().length }} élément(s) — page {{ page() }} / {{ totalPages() }}
+            </span>
+            <div class="flex gap-2">
+              <button class="btn btn-outline btn-sm" [disabled]="page() === 1" (click)="page.set(page() - 1)">‹ Précédent</button>
+              <button class="btn btn-outline btn-sm" [disabled]="page() === totalPages()" (click)="page.set(page() + 1)">Suivant ›</button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  

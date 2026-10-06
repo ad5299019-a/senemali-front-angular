@@ -1,0 +1,37 @@
+
+    <app-page-header [title]="isEdit() ? 'Modifier le conseil' : 'Nouveau conseil'">
+      <a routerLink="/conseils" class="btn btn-outline">← Retour à la liste</a>
+    </app-page-header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
+      <div class="field">
+        <label>Titre</label>
+        <input class="input" formControlName="titreConseil" [class.invalid]="isInvalid('titreConseil')" />
+        @if (isInvalid('titreConseil')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="field">
+        <label>Culture concernée</label>
+        <select class="select" formControlName="idCulture" [class.invalid]="isInvalid('idCulture')">
+          <option [ngValue]="null" disabled>Choisir une culture</option>
+          @for (c of cultures(); track c.idCulture) {
+            <option [ngValue]="c.idCulture">{{ c.nomCulture }}</option>
+          }
+        </select>
+        @if (isInvalid('idCulture')) { <span class="error">Choisissez une culture</span> }
+      </div>
+
+      <div class="field">
+        <label>Contenu du conseil</label>
+        <textarea class="textarea" rows="6" formControlName="contenu" [class.invalid]="isInvalid('contenu')"></textarea>
+        @if (isInvalid('contenu')) { <span class="error">Ce champ est requis</span> }
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer' : 'Publier') }}
+        </button>
+        <a routerLink="/conseils" class="btn btn-ghost">Annuler</a>
+      </div>
+    </form>
+  

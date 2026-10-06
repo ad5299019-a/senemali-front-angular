@@ -1,0 +1,29 @@
+
+    <app-page-header title="Fournisseurs" subtitle="Validez les nouveaux fournisseurs avant qu'ils ne publient des intrants" />
+
+    <div class="tabs">
+      @for (tab of tabs; track tab.value) {
+        <button class="tab" [class.active]="activeTab() === tab.value" (click)="setTab(tab.value)">
+          {{ tab.label }}
+          @if (tab.value !== 'TOUS') {
+            <span class="count">{{ countFor(tab.value) }}</span>
+          }
+        </button>
+      }
+    </div>
+
+    <app-data-table [columns]="columns" [rows]="filteredRows()" [loading]="loading()" emptyTitle="Aucun fournisseur dans cette catégorie" [rowActionsTemplate]="actionsTpl" />
+
+    <ng-template #actionsTpl let-row>
+      @if (row.statutFournisseur !== Statut.VALIDE) {
+        <button class="btn btn-outline btn-sm" (click)="valider(row, Statut.VALIDE)">✓ Valider</button>
+      }
+      @if (row.statutFournisseur === Statut.VALIDE && !row.statut) {
+        <button class="btn btn-primary btn-sm" (click)="activerCompte(row)">Activer le compte</button>
+      }
+      @if (row.statutFournisseur !== Statut.REFUSE) {
+        <button class="btn btn-outline btn-sm" (click)="valider(row, Statut.REFUSE)">✕ Refuser</button>
+      }
+      <button class="btn btn-danger btn-sm" (click)="remove(row)">Supprimer</button>
+    </ng-template>
+  

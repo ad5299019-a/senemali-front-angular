@@ -1,0 +1,67 @@
+<app-page-header title="Tutoriels" subtitle="Des conseils pratiques en images et en vidéos pour les producteurs">
+  <a routerLink="nouveau" class="btn btn-primary">+ Nouveau tutoriel</a>
+</app-page-header>
+
+@if (loading()) {
+  <div class="tutorial-loading">Chargement des tutoriels...</div>
+} @else if (rows().length === 0) {
+  <section class="tutorial-empty">
+    <span class="empty-icon">✦</span>
+    <h2>Vos tutoriels commenceront ici</h2>
+    <p>Créez un guide illustré ou une vidéo pour partager vos conseils agricoles.</p>
+    <a routerLink="nouveau" class="btn btn-primary">Créer un tutoriel</a>
+  </section>
+} @else {
+  <section class="tutorial-grid" aria-label="Liste des tutoriels">
+    @for (row of rows(); track row.idTutoriel) {
+      <article class="tutorial-card">
+        <button class="tutorial-card__media" type="button" (click)="selected.set(row)" [attr.aria-label]="'Voir le tutoriel ' + row.titreTutoriel">
+          @if (mediaUrl(row); as media) {
+            @if (hasVideo(row)) {
+              <video [src]="media" preload="metadata" muted playsinline></video>
+            } @else {
+              <img [src]="media" [alt]="row.titreTutoriel" />
+            }
+          } @else {
+            <img src="/culture-illustration.svg" alt="" />
+          }
+          <span class="play-badge">{{ hasVideo(row) ? '▶' : '↗' }}</span>
+          <span class="media-kind">{{ hasVideo(row) ? 'VIDÉO' : (row.urlImage ? 'GUIDE ILLUSTRÉ' : 'TUTORIEL') }}</span>
+        </button>
+
+        <div class="tutorial-card__body">
+          <span class="category-chip">{{ row.nomCategorie || 'Agriculture' }}</span>
+          <h2>{{ row.titreTutoriel }}</h2>
+          <p>{{ row.descriptionTutoriel }}</p>
+          <div class="tutorial-card__footer">
+            <button type="button" class="text-action" (click)="selected.set(row)">Voir le tutoriel <span aria-hidden="true">→</span></button>
+            <div class="tutorial-actions">
+              <a class="btn btn-outline btn-sm" [routerLink]="[row.idTutoriel, 'modifier']">Modifier</a>
+              <button class="btn btn-danger btn-sm" (click)="remove(row)">Supprimer</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    }
+  </section>
+}
+
+@if (selected(); as tutorial) {
+  <div class="tutorial-dialog-backdrop" (click)="closeDetails()">
+    <section class="tutorial-dialog" role="dialog" aria-modal="true" [attr.aria-label]="tutorial.titreTutoriel" (click)="$event.stopPropagation()">
+      <button class="dialog-close" type="button" (click)="closeDetails()" aria-label="Fermer">×</button>
+      @if (mediaUrl(tutorial); as media) {
+        @if (hasVideo(tutorial)) {
+          <video class="dialog-media" [src]="media" controls autoplay playsinline></video>
+        } @else {
+          <img class="dialog-media" [src]="media" [alt]="tutorial.titreTutoriel" />
+        }
+      }
+      <div class="tutorial-dialog__content">
+        <span class="category-chip">{{ tutorial.nomCategorie || 'Agriculture' }}</span>
+        <h2>{{ tutorial.titreTutoriel }}</h2>
+        <p>{{ tutorial.descriptionTutoriel }}</p>
+      </div>
+    </section>
+  </div>
+}

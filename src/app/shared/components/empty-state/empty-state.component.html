@@ -1,0 +1,8 @@
+
+    <div class="empty">
+      <div class="empty__icon">{{ icon() }}</div>
+      <p class="empty__title">{{ title() }}</p>
+      @if (description()) { <p class="empty__desc">{{ description() }}</p> }
+      <ng-content />
+    </div>
+  
