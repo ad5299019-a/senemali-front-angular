@@ -19,6 +19,7 @@ import { PartenaireService } from '../partenaires/partenaire.service';
 import { PrestataireService } from '../prestataires/prestataire.service';
 import { CultureService } from '../cultures/culture.service';
 import { ServiceAgricoleService } from '../services-agricoles/service-agricole.service';
+import { CommandeResponse } from '../../core/models';
 
 interface AdminStats {
   utilisateursActifs: number;
@@ -91,6 +92,9 @@ export class DashboardComponent implements OnDestroy {
   moderationItems = signal<ModerationItem[]>([]);
   recentOrders = signal<RecentOrder[]>([]);
   activeSlide = signal(0);
+
+  commandesRecues = signal<CommandeResponse[]>([]);
+  totalCommandesRecues = signal(0);
 
   readonly carouselSlides = [
     {
@@ -284,5 +288,22 @@ export class DashboardComponent implements OnDestroy {
       },
       error: () => this.loading.set(false),
     });
+
+    // Récupérer les commandes reçues
+    this.commandeService.findFournisseurCommande().subscribe({
+      next: (commandes) => {
+        this.commandesRecues.set(commandes);
+      },
+      error: (error) => {
+        console.error('Erreur commandes :', error);
+      },
+    });
+
+    // Récupérer le total des commandes reçues pour un fournisseur
+    this.commandeService.countMySales().subscribe({
+      next: (total) => this.totalCommandesRecues.set(total),
+      error: (error) => console.error('Erreur total commandes :', error),
+    });
+
   }
 }

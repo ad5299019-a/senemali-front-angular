@@ -95,15 +95,60 @@
             <app-stat-card icon="task_alt" iconBg="var(--color-primary-100)" [value]="stats.intrantsValides" label="Validés" />
             <app-stat-card icon="pending_actions" iconBg="var(--color-warning-50)" [value]="stats.intrantsEnAttente" label="En attente" />
             <app-stat-card icon="block" iconBg="var(--color-danger-50)" [value]="stats.intrantsRefuses" label="Refusés" />
+            <app-stat-card icon="shopping_bag" iconBg="var(--color-primary-100)" [value]="totalCommandesRecues()" label="Commandes reçues" />
           </div>
 
-          <div class="card shortcuts">
-            <h3>Actions rapides</h3>
-            <div class="shortcuts__grid">
-              <a routerLink="/mes-intrants" class="shortcut"><mat-icon>compost</mat-icon><span>Gérer mes intrants</span><mat-icon class="arrow">arrow_forward</mat-icon></a>
-              <a routerLink="/mon-profil" class="shortcut"><mat-icon>person</mat-icon><span>Modifier mon profil</span><mat-icon class="arrow">arrow_forward</mat-icon></a>
+          <section class="card recent-orders">
+
+            <header class="recent-orders__header">
+              <div>
+                <h3>Commandes récentes</h3>
+              </div>
+
+              <a routerLink="/fournisseurs/commandes">
+                Voir tout
+                <mat-icon>arrow_forward</mat-icon>
+              </a>
+            </header>
+
+            <div class="recent-orders__body">
+
+              @for (commande of commandesRecues().slice(0, 3); track commande.idCommande) {
+
+                <div class="recent-order">
+
+                  <div class="recent-order__customer">
+                    <strong>{{ commande.nomUtilisateur }}</strong>
+
+                    @for (detail of commande.details; track detail.idDetail) {
+                      <span>
+                        {{ detail.quantite }} x
+                        {{ detail.nomIntrant }}
+                      </span>
+                    }
+                  </div>
+
+                  <span class="recent-order__status">
+                    {{ commande.status }}
+                  </span>
+
+                  <span class="recent-order__amount">
+                    {{ commande.montantTotal.toLocaleString('fr-FR') }} FCFA
+                  </span>
+
+                </div>
+
+              } @empty {
+
+                <p class="recent-orders__empty">
+                  Aucune commande reçue.
+                </p>
+
+              }
+
             </div>
-          </div>
+
+        </section>
         }
       }
     }
