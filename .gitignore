@@ -4,3 +4,6 @@
 npm-debug.log
 *.log
 .env
+
+/figma-ecrans
+/src/ecransProduire
