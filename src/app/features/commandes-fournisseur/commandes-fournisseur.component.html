@@ -1,1 +1,11 @@
-<p>commandes-fournisseur works!</p>
+<div class="page">
+    <h1> Mes commandes </h1>
+    <p>Consultez les commandes reçues pour vos intrants</p>
+</div>
+
+
+<div class="grid">
+    <app-stat-card bg="bg-green" [value]="totalCommandes()" label="Total Commandes reçues" />
+    <app-stat-card bg="bg-white" [value]="deliveredCommandes()" label="Commandes livrées" />
+    <app-stat-card bg="bg-white" [value]="cancelledCommandes()" label="Commandes annulées"/>
+</div>

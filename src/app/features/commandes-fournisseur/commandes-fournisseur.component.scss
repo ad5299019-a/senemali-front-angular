@@ -1,0 +1,23 @@
+.page {
+    width: 1174px;
+    height: 136px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #fff;
+    border-radius: var(--radius-md);
+    justify-content: center;
+}
+
+h1 {
+  margin: 0;
+  margin-left: 2%;
+}
+
+p {
+  margin: 0;
+  margin-left: 2%;
+  color: var(--color-neutral-600);
+}
+
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 22px; }
