@@ -33,9 +33,74 @@
             <mat-icon>menu</mat-icon>
           </button>
           <div class="spacer"></div>
-          <a class="notifications" [routerLink]="notificationPath()" aria-label="Notifications">
-            <mat-icon>notifications</mat-icon>
-          </a>
+          <div class="notification-menu">
+            <button
+              class="notifications"
+              type="button"
+              (click)="toggleNotifications()"
+              [attr.aria-expanded]="notificationsOpen()"
+              aria-label="Ouvrir les notifications"
+            >
+              <mat-icon>notifications</mat-icon>
+              @if (unreadCount() > 0) {
+                <span class="notification-count">{{ unreadCount() > 99 ? '99+' : unreadCount() }}</span>
+              }
+            </button>
+            @if (notificationsOpen()) {
+              <section class="notification-popover" aria-label="Notifications reçues">
+                <header class="notification-popover__header">
+                  <div>
+                    <h2>Notifications</h2>
+                    <p>
+                      @if (unreadCount() > 0) {
+                        {{ unreadCount() }} nouvelle(s) à lire
+                      } @else {
+                        Vous êtes à jour
+                      }
+                    </p>
+                  </div>
+                  <button class="notification-refresh" type="button" (click)="refreshNotifications()" aria-label="Actualiser">
+                    <mat-icon>refresh</mat-icon>
+                  </button>
+                </header>
+                @if (notificationsError()) {
+                  <p class="notification-state notification-state--error">Impossible de récupérer vos notifications. Réessayez.</p>
+                } @else if (notificationsLoading()) {
+                  <p class="notification-state">Chargement des notifications...</p>
+                } @else if (recentNotifications().length === 0) {
+                  <div class="notification-empty">
+                    <mat-icon>notifications_none</mat-icon>
+                    <strong>Aucune notification pour le moment</strong>
+                    <span>Les messages qui vous sont envoyés apparaîtront ici.</span>
+                  </div>
+                } @else {
+                  <div class="notification-items">
+                    @for (notification of recentNotifications(); track notification.idNotification) {
+                      <article class="notification-item" [class.notification-item--unread]="!notification.lue">
+                        <div class="notification-item__top">
+                          <span class="notification-item__type">{{ notificationTypeLabel(notification) }}</span>
+                          @if (!notification.lue) { <span class="notification-item__new">Nouveau</span> }
+                        </div>
+                        <h3>{{ notification.titre }}</h3>
+                        <p>{{ notification.message }}</p>
+                        <div class="notification-item__footer">
+                          <time>{{ formatNotificationDate(notification.dateEnvoi) }}</time>
+                          @if (!notification.lue) {
+                            <button type="button" (click)="markNotificationAsRead(notification)">Marquer comme lu</button>
+                          } @else {
+                            <span class="notification-read"><mat-icon>done</mat-icon> Lu</span>
+                          }
+                        </div>
+                      </article>
+                    }
+                  </div>
+                  @if (notifications().length > recentNotifications().length) {
+                    <p class="notification-more">Affichage des 8 notifications les plus récentes.</p>
+                  }
+                }
+              </section>
+            }
+          </div>
           <div class="user">
             <div class="user__avatar">{{ initials() }}</div>
             <div class="user__info">

@@ -5,7 +5,7 @@ Les rôles AGRICULTEUR et ACHETEUR sont servis par l'application mobile Flutter 
 
 ## Stack technique
 
-- **Angular 18** — composants **standalone**, **Signals** (pas de NgRx), nouveau control flow `@if/@for/@switch`
+- **Angular 22** — composants **standalone**, **Signals** (pas de NgRx), nouveau control flow `@if/@for/@switch`
 - **Reactive Forms** pour tous les formulaires
 - **RxJS** pour les appels HTTP
 - Aucune dépendance CSS externe : design system maison dans `src/styles.scss`
