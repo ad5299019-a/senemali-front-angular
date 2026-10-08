@@ -1,53 +1,166 @@
+<app-page-header
+  title="Centre de notifications"
+  subtitle="Composez et envoyez une information aux utilisateurs de votre choix."
+/>
 
-    <app-page-header title="Envoyer une notification" subtitle="Notifiez un utilisateur précis (prix, conseil, information...)" />
+<main class="notification-layout">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="compose-card">
+    <div class="section-heading">
+      <div class="heading-icon"><mat-icon>edit_notifications</mat-icon></div>
+      <div>
+        <h2>Nouvelle notification</h2>
+        <p>Rédigez un message clair pour votre communauté.</p>
+      </div>
+    </div>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
-      <div class="grid-2">
-        <div class="field">
-          <label>Filtrer par rôle</label>
-          <select class="select" (change)="onRoleFilterChange($event)">
-            <option [value]="''">Tous les rôles</option>
-            @for (r of roleOptions; track r) {
-              <option [value]="r">{{ r }}</option>
-            }
-          </select>
+    <section class="recipient-section">
+      <div class="section-title-row">
+        <div>
+          <h3>Destinataires</h3>
+          <p>Sélectionnez un ou plusieurs utilisateurs.</p>
         </div>
-
-        <div class="field">
-          <label>Destinataire</label>
-          <select class="select" formControlName="idUtilisateur" [class.invalid]="isInvalid('idUtilisateur')">
-            <option [ngValue]="null" disabled>Choisir un destinataire</option>
-            @for (u of filteredUsers(); track u.id) {
-              <option [ngValue]="u.id">{{ u.prenom }} {{ u.nom }} — {{ u.role }}</option>
-            }
-          </select>
-          @if (isInvalid('idUtilisateur')) { <span class="error">Choisissez un destinataire</span> }
-        </div>
+        <span class="selection-count">{{ selectedIds().size }} sélectionné(s)</span>
       </div>
 
-      <div class="field">
-        <label>Type de notification</label>
-        <select class="select" formControlName="type">
-          @for (t of typeOptions; track t.value) {
-            <option [ngValue]="t.value">{{ t.label }}</option>
+      <div class="recipient-tools">
+        <label class="search-box">
+          <mat-icon>search</mat-icon>
+          <input type="search" placeholder="Rechercher un nom ou un email" (input)="onSearch($event)" />
+        </label>
+        <select class="role-select" aria-label="Filtrer par rôle" (change)="onRoleFilterChange($event)">
+          <option value="">Tous les rôles</option>
+          @for (role of roleOptions; track role.value) {
+            <option [value]="role.value">{{ role.label }}</option>
           }
         </select>
       </div>
 
-      <div class="field">
-        <label>Titre</label>
-        <input class="input" formControlName="titre" [class.invalid]="isInvalid('titre')" />
-        @if (isInvalid('titre')) { <span class="error">Ce champ est requis</span> }
-      </div>
+      <label class="select-all-row">
+        <input type="checkbox" [checked]="allVisibleSelected()" (change)="toggleVisibleRecipients($event)" />
+        <span>Sélectionner les {{ filteredUsers().length }} utilisateur(s) affiché(s)</span>
+      </label>
 
-      <div class="field">
-        <label>Message</label>
-        <textarea class="textarea" rows="5" formControlName="message" [class.invalid]="isInvalid('message')"></textarea>
-        @if (isInvalid('message')) { <span class="error">Ce champ est requis</span> }
+      <div class="recipient-list">
+        @for (user of filteredUsers(); track user.id) {
+          <label class="recipient-row" [class.is-selected]="isSelected(user.id)">
+            <input type="checkbox" [checked]="isSelected(user.id)" (change)="toggleRecipient(user.id, $event)" />
+            @if (user.photoProfil) {
+              <img class="avatar" [src]="user.photoProfil" [alt]="initials(user)" />
+            } @else {
+              <span class="avatar avatar-fallback">{{ initials(user) }}</span>
+            }
+            <span class="recipient-info">
+              <strong>{{ user.prenom }} {{ user.nom }}</strong>
+              <small>{{ user.email }}</small>
+            </span>
+            <span class="role-badge">{{ roleLabel(user.role) }}</span>
+          </label>
+        } @empty {
+          <div class="empty-recipients">
+            <mat-icon>person_search</mat-icon>
+            <span>Aucun utilisateur ne correspond à votre recherche.</span>
+          </div>
+        }
       </div>
+    </section>
 
-      <button type="submit" class="btn btn-primary" [disabled]="saving()">
-        {{ saving() ? 'Envoi...' : 'Envoyer la notification' }}
+    <div class="field">
+      <label for="notification-type">Type de notification</label>
+      <select id="notification-type" class="form-control" formControlName="type">
+        @for (type of typeOptions; track type.value) {
+          <option [ngValue]="type.value">{{ type.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="notification-title">Titre</label>
+      <input
+        id="notification-title"
+        class="form-control"
+        formControlName="titre"
+        [class.invalid]="isInvalid('titre')"
+        placeholder="Ex. Mise à jour importante"
+      />
+      @if (isInvalid('titre')) { <span class="error">Le titre est requis.</span> }
+    </div>
+
+    <div class="field">
+      <div class="label-row">
+        <label for="notification-message">Votre message</label>
+        <span>{{ form.controls.message.value.length }} caractères</span>
+      </div>
+      <textarea
+        id="notification-message"
+        class="form-control message-input"
+        rows="5"
+        formControlName="message"
+        [class.invalid]="isInvalid('message')"
+        placeholder="Écrivez ici les détails de votre notification..."
+      ></textarea>
+      @if (isInvalid('message')) { <span class="error">Le message est requis.</span> }
+    </div>
+
+    <div class="form-footer">
+      <span class="delivery-note">
+        <mat-icon>info</mat-icon>
+        Un envoi individuel sera créé pour chaque destinataire.
+      </span>
+      <button type="submit" class="send-button" [disabled]="saving()">
+        <mat-icon>{{ saving() ? 'hourglass_top' : 'send' }}</mat-icon>
+        {{ saving() ? 'Envoi en cours...' : 'Envoyer à ' + selectedIds().size + ' utilisateur(s)' }}
       </button>
-    </form>
-  
+    </div>
+  </form>
+
+  <aside class="side-panel">
+    <section class="preview-card">
+      <div class="preview-topline">
+        <span class="preview-symbol"><mat-icon>notifications_active</mat-icon></span>
+        <span class="preview-label">APERÇU DU MESSAGE</span>
+      </div>
+      <div class="preview-content">
+        <span class="preview-type">{{ form.controls.type.value | titlecase }}</span>
+        <h3>{{ form.controls.titre.value || 'Le titre de votre notification' }}</h3>
+        <p>{{ form.controls.message.value || 'Votre message apparaîtra ici au fur et à mesure de sa rédaction.' }}</p>
+      </div>
+      <div class="preview-footer">
+        <span class="preview-dot"></span>
+        <span>Notification SeneMali</span>
+        <span class="preview-time">À l’instant</span>
+      </div>
+    </section>
+
+    <section class="audience-card">
+      <div class="audience-icon"><mat-icon>groups</mat-icon></div>
+      <div>
+        <span class="eyebrow">VOTRE AUDIENCE</span>
+        <strong>{{ selectedIds().size }} <small>destinataire(s)</small></strong>
+        <p>
+          @if (selectedIds().size === 0) {
+            Choisissez les personnes qui recevront cette notification.
+          } @else {
+            Votre message sera envoyé individuellement à chaque personne sélectionnée.
+          }
+        </p>
+      </div>
+    </section>
+
+    <section class="tips-card">
+      <div class="tips-heading">
+        <mat-icon>lightbulb</mat-icon>
+        <h3>Un message efficace</h3>
+      </div>
+      <ul>
+        <li><mat-icon>check_circle</mat-icon><span>Choisissez un titre court et explicite.</span></li>
+        <li><mat-icon>check_circle</mat-icon><span>Gardez un ton simple et chaleureux.</span></li>
+        <li><mat-icon>check_circle</mat-icon><span>Vérifiez votre audience avant l’envoi.</span></li>
+      </ul>
+      <div class="tips-decoration" aria-hidden="true">
+        <span class="decoration-leaf leaf-one"></span>
+        <span class="decoration-leaf leaf-two"></span>
+        <span class="decoration-leaf leaf-three"></span>
+      </div>
+    </section>
+  </aside>
+</main>

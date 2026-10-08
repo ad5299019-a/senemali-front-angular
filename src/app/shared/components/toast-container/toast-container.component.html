@@ -1,7 +1,7 @@
 
-    <div class="toast-stack">
+    <div class="toast-stack" aria-live="polite">
       @for (toast of toastService.toasts(); track toast.id) {
-        <div class="toast" [class]="'toast--' + toast.kind">
+        <div [class]="'toast toast--' + toast.kind">
           <span class="toast__icon">
             @switch (toast.kind) {
               @case ('success') { ✓ }
@@ -11,7 +11,7 @@
             }
           </span>
           <span class="toast__message">{{ toast.message }}</span>
-          <button class="toast__close" (click)="toastService.dismiss(toast.id)" aria-label="Fermer">×</button>
+          <button class="toast__close" type="button" (click)="toastService.dismiss(toast.id)" aria-label="Fermer la notification">×</button>
         </div>
       }
     </div>

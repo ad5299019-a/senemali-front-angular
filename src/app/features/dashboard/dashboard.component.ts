@@ -15,6 +15,7 @@ import { FournisseurService } from '../fournisseurs/fournisseur.service';
 import { CommandeService } from '../commandes/commande.service';
 import { IntrantService } from '../intrants/intrant.service';
 import { MatIconModule } from '@angular/material/icon';
+import { DashboardPriorityPanelComponent } from './dashboard-priority-panel.component';
 import { PartenaireService } from '../partenaires/partenaire.service';
 import { PrestataireService } from '../prestataires/prestataire.service';
 import { CultureService } from '../cultures/culture.service';
@@ -66,7 +67,7 @@ interface RecentOrder {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, PageHeaderComponent, StatCardComponent, LoadingSpinnerComponent, MatIconModule],
+  imports: [RouterLink, PageHeaderComponent, StatCardComponent, LoadingSpinnerComponent, MatIconModule, DashboardPriorityPanelComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
