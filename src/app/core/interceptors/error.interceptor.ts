@@ -24,8 +24,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       switch (err.status) {
         case 401:
-          toast.error(serverMessage ?? 'Session expirée ou invalide, veuillez vous reconnecter.');
-          auth.logout();
+          if (!router.url.includes('/auth/')) {
+            toast.error(serverMessage ?? 'Session expirée ou invalide, veuillez vous reconnecter.');
+            auth.logout();
+          } else {
+            toast.error(serverMessage ?? 'Accès non autorisé.');
+          }
           break;
         case 403:
           toast.error(serverMessage ?? "Vous n'avez pas les droits nécessaires pour cette action.");
