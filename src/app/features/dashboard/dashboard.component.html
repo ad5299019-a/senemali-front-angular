@@ -27,14 +27,18 @@
           </div>
         </section>
 
-        <div class="grid">
-          <app-stat-card icon="groups" iconBg="var(--color-primary-100)" [value]="stats.utilisateursActifs" label="Utilisateurs actifs" [detail]="userBreakdown()" />
-          <app-stat-card icon="account_balance" iconBg="var(--color-primary-100)" [value]="stats.totalFinanciers" label="Financiers" />
-          <app-stat-card icon="support_agent" iconBg="var(--color-primary-100)" [value]="stats.totalPrestataires" label="Prestataires" />
-          <app-stat-card icon="psychiatry" iconBg="var(--color-primary-100)" [value]="stats.totalCultures" label="Cultures" />
-          <app-stat-card icon="handyman" iconBg="var(--color-primary-100)" [value]="stats.totalServicesAgricoles" label="Services agricoles" />
-          <app-stat-card icon="package_2" iconBg="var(--color-primary-100)" [value]="stats.totalCommandes" label="Commandes" [detail]="ordersBreakdown()" />
-        </div>
+        <section class="admin-overview" aria-label="Indicateurs de la plateforme">
+          <div class="admin-overview__stats">
+            <app-stat-card icon="groups" iconBg="var(--color-primary-100)" [value]="stats.utilisateursActifs" label="Utilisateurs actifs" [detail]="userBreakdown()" />
+            <app-stat-card icon="account_balance" iconBg="var(--color-primary-100)" [value]="stats.totalFinanciers" label="Financiers" />
+            <app-stat-card icon="support_agent" iconBg="var(--color-primary-100)" [value]="stats.totalPrestataires" label="Prestataires" />
+            <app-stat-card icon="psychiatry" iconBg="var(--color-primary-100)" [value]="stats.totalCultures" label="Cultures" />
+            <app-stat-card icon="handyman" iconBg="var(--color-primary-100)" [value]="stats.totalServicesAgricoles" label="Services agricoles" />
+            <app-stat-card icon="package_2" iconBg="var(--color-primary-100)" [value]="stats.totalCommandes" label="Commandes" [detail]="ordersBreakdown()" />
+          </div>
+
+          <app-dashboard-priority-panel />
+        </section>
 
         <section class="card moderation">
           <header class="moderation__header">

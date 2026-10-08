@@ -5,7 +5,17 @@
       width: 48px; height: 48px; border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
     }
-    .stat-card__icon mat-icon { width: 30px; height: 30px; color: var(--color-primary-600); font-size: 30px; }
+    .stat-card__icon mat-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      overflow: visible;
+      color: var(--color-primary-600);
+      font-size: 30px;
+      line-height: 1;
+    }
     .stat-card__label { overflow: hidden; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
     .stat-card__value { margin-top: 5px; color: var(--color-text); font-size: 25px; font-weight: 700; line-height: 1.1; }
     .stat-card__detail { margin-top: 8px; color: var(--color-text-subtle); font-size: 11px; line-height: 1.5; }
