@@ -1,0 +1,375 @@
+/* Règle globale pour garantir qu'aucune icône Material n'est rognée */
+mat-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: visible !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+  flex-shrink: 0 !important;
+}
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 16px;
+  background: rgba(18, 30, 22, 0.55);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.15s ease-out;
+}
+
+.dialog {
+  width: min(100%, 640px);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 24px 64px rgba(12, 33, 19, 0.28);
+  animation: slideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* En-tête */
+.dialog__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--color-primary-500);
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.dialog__header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.dialog__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #ffffff;
+  }
+}
+
+.dialog__heading {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dialog__eyebrow {
+  color: #c9ebd1;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.dialog__heading h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dialog__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  width: fit-content;
+  margin-top: 2px;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.dialog__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #ffffff;
+  }
+}
+
+/* Corps déroulant avec padding inférieur suffisant pour ne jamais cacher la dernière ligne */
+.dialog__body {
+  padding: 16px 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  min-height: 0; /* Essentiel pour le bon fonctionnement du scroll dans un conteneur flex */
+
+  /* Scrollbar visible et stylée */
+  scrollbar-width: thin;
+  scrollbar-color: #c7cfc7 transparent;
+}
+
+/* Grande Image Hero ajustée pour laisser toute la place à la description */
+.culture-hero {
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--color-primary-50);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+}
+
+.culture-hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.culture-hero__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--color-text-subtle);
+  background: linear-gradient(135deg, #f7faf8 0%, #edf4ef 100%);
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: var(--color-primary-400);
+    opacity: 0.8;
+  }
+
+  span {
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+
+/* Grille d'infos compacte */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.info-card {
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--color-primary-50);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-card__label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    color: var(--color-primary-500);
+  }
+}
+
+.info-card__value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Section Description – Mise en page aérée pour afficher chaque ligne intégralement */
+.description-section {
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+}
+
+.description-section__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f7faf8;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 12px 12px 0 0;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--color-primary-600);
+  }
+
+  h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+  }
+}
+
+.description-section__content {
+  padding: 14px 16px;
+}
+
+/* pre-wrap garantit que CHAQUE saut de ligne est préservé et visible sans coupure */
+.description-text {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #1f2420;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.description-empty {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Pied de page */
+.dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-top: 1px solid var(--color-border);
+  background: #fdfdfd;
+  flex-shrink: 0;
+}
+
+.dialog__footer-left {
+  display: flex;
+  align-items: center;
+}
+
+.dialog__footer-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .dialog-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .dialog {
+    border-radius: 18px 18px 0 0;
+    max-height: 90vh;
+  }
+
+  .culture-hero {
+    height: 150px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dialog__footer {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .dialog__footer-left,
+  .dialog__footer-right {
+    width: 100%;
+  }
+
+  .dialog__footer .btn {
+    flex: 1;
+    text-align: center;
+  }
+}

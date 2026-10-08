@@ -4,7 +4,7 @@ import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../models/api-response.model';
 
-export type UploadFolder = 'profils' | 'produits' | 'intrants' | 'cultures' | 'tutoriels' | 'services' | 'conseils';
+export type UploadFolder = 'profils' | 'produits' | 'intrants' | 'cultures' | 'tutoriels' | 'services' | 'conseils' | 'financements';
 
 export interface UploadResult {
   fileName: string;

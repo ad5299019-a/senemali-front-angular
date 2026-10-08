@@ -40,10 +40,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           toast.error('Impossible de joindre le serveur. Vérifiez votre connexion.');
           break;
         default: {
-          // Erreurs de validation (400) : le backend renvoie souvent une map { champ: message }
-          if (body?.errors) {
-            const firstError = Object.values(body.errors)[0];
-            toast.error(firstError ?? serverMessage ?? 'Requête invalide.');
+          // Erreurs de validation (400) : le backend renvoie une map { champ: message } dans errors ou fields
+          const validationMap = body?.errors ?? body?.fields;
+          if (validationMap && Object.keys(validationMap).length > 0) {
+            const firstError = Object.values(validationMap)[0];
+            toast.error(serverMessage ?? firstError ?? 'Requête invalide.');
           } else {
             toast.error(serverMessage ?? 'Une erreur est survenue. Veuillez réessayer.');
           }
