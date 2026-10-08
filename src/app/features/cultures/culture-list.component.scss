@@ -1,4 +1,456 @@
-.culture-name { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
-.culture-name__image, .culture-name__placeholder { display: grid; place-items: center; box-sizing: border-box; width: 42px; height: 42px; flex: none; overflow: hidden; border-radius: 10px; background: var(--color-primary-50); object-fit: cover; }
-.culture-name__placeholder mat-icon { display: grid; place-items: center; width: 28px; height: 28px; overflow: visible; color: var(--color-primary-500); font-size: 27px; line-height: 1; }
-.culture-name strong { overflow: hidden; color: var(--color-text); font-size: 12px; font-weight: 700; text-overflow: ellipsis; }
+/* Protection globale des icônes Material pour éviter tout rognage */
+mat-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: visible !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+}
+
+/* ==========================================================================
+   Barre d'outils (Recherche + Compteur + Toggle Grille/Tableau)
+   ========================================================================== */
+.culture-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: min(100%, 340px);
+
+  mat-icon {
+    position: absolute;
+    left: 12px;
+    font-size: 19px;
+    width: 19px;
+    height: 19px;
+    color: var(--color-text-subtle);
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    height: 40px;
+    padding: 0 36px 0 38px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    background: #ffffff;
+    font-size: 13.5px;
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus {
+      border-color: var(--color-primary-400);
+      box-shadow: 0 0 0 3px var(--color-primary-50);
+    }
+
+    &::placeholder {
+      color: var(--color-text-subtle);
+    }
+  }
+
+  .clear-search {
+    position: absolute;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-subtle);
+    border-radius: 50%;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: #eef3ee;
+      color: var(--color-text);
+    }
+
+    mat-icon {
+      position: static;
+      font-size: 15px;
+      width: 15px;
+      height: 15px;
+    }
+  }
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.count-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary-700);
+  background: var(--color-primary-100);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.view-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: #edf2ee;
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+}
+
+.toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  mat-icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+    color: inherit;
+  }
+
+  &:hover:not(.active) {
+    color: var(--color-text);
+  }
+
+  &.active {
+    background: #ffffff;
+    color: var(--color-primary-600);
+    box-shadow: 0 1px 4px rgba(18, 40, 20, 0.1);
+  }
+}
+
+/* ==========================================================================
+   Grille de Cartes Modernes
+   ========================================================================== */
+.cultures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 22px;
+  animation: fadeInGrid 0.2s ease-out;
+}
+
+@keyframes fadeInGrid {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.culture-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(18, 30, 22, 0.04);
+  cursor: pointer;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 32px rgba(15, 45, 20, 0.12);
+    border-color: rgba(63, 174, 90, 0.45);
+
+    .culture-card__image {
+      transform: scale(1.05);
+    }
+
+    .culture-card__title {
+      color: var(--color-primary-600);
+    }
+
+    .culture-card__details-hint {
+      color: var(--color-primary-600);
+
+      mat-icon {
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+/* Zone Image de la Carte */
+.culture-card__media {
+  position: relative;
+  width: 100%;
+  height: 175px;
+  overflow: hidden;
+  background: var(--color-primary-50);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.culture-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.culture-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #f7faf8 0%, #edf4ef 100%);
+  color: var(--color-text-subtle);
+
+  mat-icon {
+    font-size: 42px;
+    width: 42px;
+    height: 42px;
+    color: var(--color-primary-400);
+    opacity: 0.8;
+  }
+
+  span {
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+}
+
+.culture-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(6px);
+  color: var(--color-primary-700);
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+
+  mat-icon {
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+    color: var(--color-primary-500);
+  }
+}
+
+/* Corps de la Carte */
+.culture-card__body {
+  padding: 16px 18px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.culture-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.culture-card__title {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.culture-card__id {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-subtle);
+  background: #edf2ee;
+  padding: 2px 7px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.culture-card__desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: calc(13px * 1.55 * 2);
+
+  &.is-empty {
+    font-style: italic;
+    color: var(--color-text-subtle);
+  }
+}
+
+/* Pied de la Carte */
+.culture-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-top: 1px solid var(--color-border);
+  background: #fafcfa;
+  margin-top: auto;
+  gap: 10px;
+}
+
+.culture-card__details-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-subtle);
+  transition: color 0.15s ease;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.15s ease;
+  }
+}
+
+.culture-card__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   Styles existants conservés pour le mode Tableau
+   ========================================================================== */
+.culture-name-btn {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(35, 122, 59, 0.08);
+
+    .culture-name strong {
+      color: var(--color-primary-600);
+      text-decoration: underline;
+    }
+
+    .culture-name__image {
+      transform: scale(1.04);
+    }
+  }
+}
+
+.culture-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.culture-name__image,
+.culture-name__placeholder {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--color-primary-50);
+  border: 1px solid var(--color-border);
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.culture-name__placeholder mat-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  overflow: visible;
+  color: var(--color-primary-500);
+  font-size: 26px;
+  line-height: 1;
+}
+
+.culture-name strong {
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  transition: color 0.15s ease;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .culture-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .toolbar-actions {
+    justify-content: space-between;
+  }
+
+  .cultures-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

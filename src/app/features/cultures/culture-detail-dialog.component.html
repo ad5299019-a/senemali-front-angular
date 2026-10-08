@@ -1,0 +1,83 @@
+<div class="dialog-backdrop" role="presentation" (click)="close()" (keydown.escape)="close()">
+  <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="culture-detail-title" (click)="$event.stopPropagation()">
+    <!-- En-tête -->
+    <header class="dialog__header">
+      <div class="dialog__header-left">
+        <div class="dialog__icon">
+          <mat-icon aria-hidden="true">spa</mat-icon>
+        </div>
+        <div class="dialog__heading">
+          <span class="dialog__eyebrow">CATALOGUE DES CULTURES</span>
+          <h2 id="culture-detail-title">{{ culture().nomCulture }}</h2>
+          <span class="dialog__badge">
+            <mat-icon aria-hidden="true">category</mat-icon>
+            {{ culture().nomCategorie || 'Non catégorisé' }}
+          </span>
+        </div>
+      </div>
+      <button type="button" class="dialog__close" aria-label="Fermer" (click)="close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <!-- Corps -->
+    <div class="dialog__body">
+      <!-- Grande Image de la culture -->
+      <div class="culture-hero">
+        @if (imageUrl(); as src) {
+          <img [src]="src" [alt]="culture().nomCulture" class="culture-hero__image" (error)="onImageError()" />
+        } @else {
+          <div class="culture-hero__placeholder">
+            <mat-icon aria-hidden="true">photo_size_select_actual</mat-icon>
+            <span>Aucune image enregistrée pour cette culture</span>
+          </div>
+        }
+      </div>
+
+      <!-- Informations clés -->
+      <div class="info-grid">
+        <div class="info-card">
+          <span class="info-card__label">
+            <mat-icon aria-hidden="true">tag</mat-icon>
+            Identifiant
+          </span>
+          <strong class="info-card__value">#{{ culture().idCulture }}</strong>
+        </div>
+
+        <div class="info-card">
+          <span class="info-card__label">
+            <mat-icon aria-hidden="true">folder_open</mat-icon>
+            Catégorie rattachée
+          </span>
+          <strong class="info-card__value">{{ culture().nomCategorie || 'Aucune' }}</strong>
+        </div>
+      </div>
+
+      <!-- Section Description -->
+      <div class="description-section">
+        <div class="description-section__header">
+          <mat-icon aria-hidden="true">notes</mat-icon>
+          <h3>Description de la culture</h3>
+        </div>
+        <div class="description-section__content">
+          @if (hasDescription()) {
+            <p class="description-text">{{ culture().description }}</p>
+          } @else {
+            <p class="description-empty">Aucune description renseignée pour cette culture.</p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Pied de page avec boutons originaux du design -->
+    <footer class="dialog__footer">
+      <div class="dialog__footer-left">
+        <button type="button" class="btn btn-danger btn-sm" (click)="onDelete()">Supprimer</button>
+      </div>
+      <div class="dialog__footer-right">
+        <button type="button" class="btn btn-outline btn-sm" (click)="onEdit()">Modifier</button>
+        <button type="button" class="btn btn-primary btn-sm" (click)="close()">Fermer</button>
+      </div>
+    </footer>
+  </section>
+</div>
