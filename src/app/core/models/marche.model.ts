@@ -30,6 +30,8 @@ export interface IntrantResponse {
   typeIntrant: string;
   description?: string | null;
   quantite?: number | null;
+  unite?: string | null;
+  localisation?: string | null;
   prix: number;
   disponible: boolean;
   statutIntrant: StatutValidationFournisseur;
@@ -45,4 +47,7 @@ export interface IntrantRequest {
   disponible: boolean;
   imageUrl?: string | null;
   idFournisseur: number;
+  quantite?: number | null;
+  unite?: string | null;
+  localisation?: string | null;
 }

@@ -1,0 +1,125 @@
+@if (loading()) {
+  <div class="detail-loading">
+    <app-loading-spinner label="Chargement des détails de la commande..." />
+  </div>
+} @else if (error() || !commande()) {
+  <div class="card detail-card detail-error">
+    <app-empty-state
+      icon="⚠️"
+      [title]="error() || 'Commande introuvable'"
+      description="La commande demandée n'existe pas ou ne peut pas être affichée."
+    />
+    <div class="error-actions">
+      <a routerLink="/fournisseur/commandes" class="btn btn-outline">
+        <mat-icon>arrow_back</mat-icon>
+        Retour aux commandes
+      </a>
+    </div>
+  </div>
+} @else {
+  @if (commande(); as c) {
+    <div class="card detail-card">
+      <!-- En-tête -->
+      <header class="detail-card__header">
+        <div class="header-titles">
+          <h1 class="page-title">Détails de la commande</h1>
+          <p class="order-subtitle">Commande N° {{ c.idCommande }}</p>
+        </div>
+        <a routerLink="/fournisseur/commandes" class="btn btn-outline btn-sm back-link">
+          <mat-icon>arrow_back</mat-icon>
+          Retour aux commandes
+        </a>
+      </header>
+      <div class="header-line"></div>
+
+      <!-- Timeline verticale -->
+      <div class="timeline">
+        <!-- Étape 1 : Informations clients -->
+        <div class="timeline-step timeline-step--1">
+          <div class="timeline-marker">
+            <div class="step-circle step-circle--active">1</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h2 class="step-title">Informations clients</h2>
+            <div class="client-info">
+              <p class="client-line client-name">
+                {{ c.nomUtilisateur || (client() ? (client()!.prenom + ' ' + client()!.nom) : 'Client') }}
+              </p>
+              @if (client()?.telephone) {
+                <p class="client-line">Téléphone : {{ client()!.telephone }}</p>
+              }
+              @if (client()?.localisation) {
+                <p class="client-line">Localisation : {{ client()!.localisation }}</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Étape 2 : Produits commandés -->
+        <div class="timeline-step timeline-step--2">
+          <div class="timeline-marker">
+            <div class="step-circle step-circle--inactive">2</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h2 class="step-title">Produits commandés</h2>
+            <div class="products-section">
+              <div class="separator-line"></div>
+              <div class="products-grid">
+                @for (detail of c.details; track detail.idDetail) {
+                  <div class="product-col">
+                    <p class="product-name">{{ getDetailNom(detail) }}</p>
+                    <p class="product-info">Quantité : {{ detail.quantite }}</p>
+                    <p class="product-info">Prix unitaire : {{ formatMontant(detail.prixUnitaire) }}</p>
+                    <p class="product-info">Total : {{ formatMontant(detail.montant) }}</p>
+                  </div>
+                } @empty {
+                  <p class="text-muted">Aucun article dans cette commande.</p>
+                }
+              </div>
+              <div class="separator-line"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Étape 3 : Total & Statut -->
+        <div class="timeline-step timeline-step--3">
+          <div class="timeline-marker">
+            <div class="step-circle step-circle--inactive">3</div>
+          </div>
+          <div class="step-content">
+            <p class="total-line">
+              Total commande : {{ formatMontant(c.montantTotal) }}
+            </p>
+            <div class="status-badge-wrap">
+              <span [class]="getStatutClass(c.status)">
+                {{ getStatutLabel(c.status) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions en bas de page -->
+      <footer class="actions-row">
+        <button
+          type="button"
+          class="btn-refuser"
+          [disabled]="c.status !== StatutCommandeEnum.EN_COURS || actionLoading()"
+          (click)="refuserCommande()"
+        >
+          Refuser la commande
+        </button>
+        <button
+          type="button"
+          class="btn-confirmer"
+          [disabled]="c.status !== StatutCommandeEnum.EN_COURS || actionLoading()"
+          (click)="confirmerCommande()"
+        >
+          Confirmer la commande
+        </button>
+      </footer>
+    </div>
+  }
+}

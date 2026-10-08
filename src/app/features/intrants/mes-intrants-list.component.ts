@@ -1,56 +1,118 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { IntrantService } from './intrant.service';
 import { AuthService } from '../../core/services/auth.service';
-import { IntrantResponse, STATUT_VALIDATION_LABELS, StatutValidationFournisseur } from '../../core/models';
-import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
-import { DataTableComponent } from '../../shared/components/data-table/data-table.component';
-import { ColumnDef } from '../../shared/components/data-table/column-def';
-import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
+import { IntrantResponse } from '../../core/models';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { ToastService } from '../../core/services/toast.service';
+import { FileStorageService } from '../../core/services/file-storage.service';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-mes-intrants-list',
   standalone: true,
-  imports: [RouterLink, PageHeaderComponent, DataTableComponent, StatusBadgeComponent],
+  imports: [RouterLink, MatIconModule, LoadingSpinnerComponent, EmptyStateComponent],
   templateUrl: './mes-intrants-list.component.html',
+  styleUrl: './mes-intrants-list.component.scss',
 })
-export class MesIntrantsListComponent {
+export class MesIntrantsListComponent implements OnInit {
   private service = inject(IntrantService);
   private auth = inject(AuthService);
   private confirm = inject(ConfirmService);
   private toast = inject(ToastService);
+  private fileStorage = inject(FileStorageService);
 
-  rows = signal<IntrantResponse[]>([]);
+  intrants = signal<IntrantResponse[]>([]);
   loading = signal(true);
+  searchTerm = signal('');
+  selectedCategory = signal('Tous');
 
-  columns: ColumnDef<IntrantResponse>[] = [
-    { header: 'Intrant', accessor: (r) => r.nomIntrant },
-    { header: 'Type', accessor: (r) => r.typeIntrant },
-    { header: 'Prix', accessor: (r) => `${r.prix.toLocaleString('fr-FR')} FCFA`, align: 'right' },
-    { header: 'Disponible', accessor: (r) => (r.disponible ? 'Oui' : 'Non'), align: 'center' },
-    {
-      header: 'Statut',
-      accessor: (r) => STATUT_VALIDATION_LABELS[r.statutIntrant],
-      align: 'center',
-    },
-  ];
+  readonly categories = ['Tous', 'Céréales', 'Maraîchage', 'Arboriculture', 'Rente'];
 
-  ngOnInit(): void { this.load(); }
+  filteredIntrants = computed(() => {
+    const list = this.intrants();
+    const query = this.searchTerm().trim().toLowerCase();
+    const category = this.selectedCategory();
+
+    return list.filter((item) => {
+      // Filtre par catégorie si différent de 'Tous'
+      const matchCategory =
+        category === 'Tous' ||
+        (item.typeIntrant && item.typeIntrant.toLowerCase().includes(category.toLowerCase())) ||
+        item.nomIntrant.toLowerCase().includes(category.toLowerCase());
+
+      // Filtre par recherche textuelle
+      const matchQuery =
+        !query ||
+        item.nomIntrant.toLowerCase().includes(query) ||
+        (item.typeIntrant && item.typeIntrant.toLowerCase().includes(query)) ||
+        (item.description && item.description.toLowerCase().includes(query));
+
+      return matchCategory && matchQuery;
+    });
+  });
+
+  ngOnInit(): void {
+    this.load();
+  }
 
   private load(): void {
     this.loading.set(true);
-    const idFournisseur = this.auth.currentUser()!.id;
-    this.service.findByFournisseur(idFournisseur).subscribe({
-      next: (d) => { this.rows.set(d); this.loading.set(false); },
-      error: () => this.loading.set(false),
+    const currentUser = this.auth.currentUser();
+    if (!currentUser) {
+      this.loading.set(false);
+      return;
+    }
+
+    this.service.findByFournisseur(currentUser.id).subscribe({
+      next: (data) => {
+        this.intrants.set(data);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Erreur chargement intrants fournisseur :', err);
+        this.loading.set(false);
+      },
     });
   }
 
-  async remove(row: IntrantResponse): Promise<void> {
-    const ok = await this.confirm.ask({ title: 'Supprimer l\'intrant', message: `Supprimer "${row.nomIntrant}" ?`, danger: true });
+  formatPrix(prix: number | null | undefined): string {
+    if (prix == null) return '0 FCFA';
+    return `${prix.toLocaleString('fr-FR')} FCFA`;
+  }
+
+  getImageUrl(intrant: IntrantResponse): string {
+    return this.fileStorage.resolveUrl(intrant.imageUrl) || '/imageHommeChampConnexionInscription.png';
+  }
+
+  onTabsWheel(event: WheelEvent): void {
+    const target = event.currentTarget as HTMLElement;
+    if (event.deltaY !== 0) {
+      target.scrollLeft += event.deltaY;
+      event.preventDefault();
+    }
+  }
+
+  async remove(intrant: IntrantResponse): Promise<void> {
+    const ok = await this.confirm.ask({
+      title: "Supprimer l'intrant",
+      message: `Voulez-vous vraiment supprimer "${intrant.nomIntrant}" ?`,
+      confirmLabel: 'Supprimer',
+      danger: true,
+    });
     if (!ok) return;
-    this.service.remove(row.idIntrant).subscribe(() => { this.toast.success('Intrant supprimé.'); this.load(); });
+
+    this.service.remove(intrant.idIntrant).subscribe({
+      next: () => {
+        this.toast.success('Intrant supprimé avec succès.');
+        this.load();
+      },
+      error: (err) => {
+        console.error('Erreur suppression intrant :', err);
+        this.toast.error("Impossible de supprimer cet intrant.");
+      },
+    });
   }
 }

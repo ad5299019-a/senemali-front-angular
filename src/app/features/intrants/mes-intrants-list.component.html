@@ -1,12 +1,95 @@
+<div class="intrants-page">
+  <!-- En-tête -->
+  <header class="intrants-header">
+    <div class="header-titles">
+      <h1 class="page-title">Intrants</h1>
+      <p class="page-subtitle">Gérer votre catalogue de produits agricoles</p>
+    </div>
+    <a routerLink="nouveau" class="btn-add">
+      <mat-icon class="btn-add-icon">add_circle</mat-icon>
+      Ajouter un intrant
+    </a>
+  </header>
 
-    <app-page-header title="Mes intrants" subtitle="Publiez vos semences, engrais ou produits vétérinaires. Chaque nouvel intrant doit être validé par un administrateur.">
-      <a routerLink="nouveau" class="btn btn-primary">+ Nouvel intrant</a>
-    </app-page-header>
+  <!-- Filtres : Recherche + Catégories -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Rechercher un produit ..."
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+      />
+    </div>
 
-    <app-data-table [columns]="columns" [rows]="rows()" [loading]="loading()" emptyTitle="Vous n'avez publié aucun intrant" [rowActionsTemplate]="actionsTpl" />
+    <div class="category-tabs-container">
+      <div class="category-tabs-scroll" (wheel)="onTabsWheel($event)">
+        @for (cat of categories; track cat) {
+          <button
+            type="button"
+            class="category-tab"
+            [class.category-tab--active]="selectedCategory() === cat"
+            (click)="selectedCategory.set(cat)"
+          >
+            {{ cat }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
 
-    <ng-template #actionsTpl let-row>
-      <a class="btn btn-outline btn-sm" [routerLink]="[row.idIntrant, 'modifier']">Modifier</a>
-      <button class="btn btn-danger btn-sm" (click)="remove(row)">Supprimer</button>
-    </ng-template>
-  
+  <!-- Conteneur défilable verticalement -->
+  @if (loading()) {
+    <div class="loading-wrap">
+      <app-loading-spinner label="Chargement de vos intrants..." />
+    </div>
+  } @else if (filteredIntrants().length === 0) {
+    <div class="empty-wrap">
+      <app-empty-state
+        icon="🌱"
+        title="Aucun intrant trouvé"
+        [description]="searchTerm() || selectedCategory() !== 'Tous' ? 'Aucun intrant ne correspond à vos critères de recherche.' : 'Vous n\'avez encore publié aucun intrant.'"
+      />
+    </div>
+  } @else {
+    <div class="intrants-scroll-wrap">
+      <div class="intrants-grid">
+        @for (intrant of filteredIntrants(); track intrant.idIntrant) {
+          <div class="intrant-card">
+            <div class="card-image-box">
+              <img [src]="getImageUrl(intrant)" [alt]="intrant.nomIntrant" class="card-image" />
+            </div>
+
+            <div class="card-body">
+              <h3 class="card-title">{{ intrant.nomIntrant }}</h3>
+              <p class="card-type">{{ intrant.typeIntrant || 'Intrant' }}</p>
+
+              <div class="card-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Prix</span>
+                  <span class="meta-value">{{ formatPrix(intrant.prix) }} <small>{{ intrant.unite ? '/' + intrant.unite : '/kg' }}</small></span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Stock</span>
+                  <span class="meta-value">{{ intrant.quantite != null ? intrant.quantite + ' ' + (intrant.unite || 'kg') : '1240 kg' }}</span>
+                </div>
+              </div>
+
+              <div class="card-actions">
+                <a [routerLink]="[intrant.idIntrant, 'modifier']" class="btn-card-edit">
+                  <mat-icon class="action-icon">edit</mat-icon>
+                  Modifier
+                </a>
+                <button type="button" class="btn-card-delete" (click)="remove(intrant)" title="Supprimer">
+                  <mat-icon class="action-icon">delete_outline</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
