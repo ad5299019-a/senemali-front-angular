@@ -1,0 +1,75 @@
+<div class="page">
+    <h1> Mes commandes </h1>
+    <p>Consultez les commandes reçues pour vos intrants</p>
+</div>
+
+
+<div class="grid">
+    <app-stat-card bg="bg-green" [value]="totalCommandes()" label="Total Commandes reçues" />
+    <app-stat-card bg="bg-white" [value]="deliveredCommandes()" label="Commandes livrées" />
+    <app-stat-card bg="bg-white" [value]="cancelledCommandes()" label="Commandes annulées"/>
+</div>
+
+<div class="orders-card">
+  <div class="orders-card__header">
+    <h2 class="orders-card__title">Toutes les commandes</h2>
+    <p class="orders-card__subtitle">Cliquez sur une ligne pour ouvrir un détail</p>
+  </div>
+
+  @if (loading()) {
+    <div class="table-loading">
+      <app-loading-spinner label="Chargement des commandes..." />
+    </div>
+  } @else if (commandes().length === 0) {
+    <div class="table-empty">
+      <app-empty-state icon="📦" title="Aucune commande" description="Vous n'avez reçu aucune commande pour le moment." />
+    </div>
+  } @else {
+    <div class="table-scroll-wrap">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th class="th-commande">Commande</th>
+            <th class="th-agriculteur">Agriculteur</th>
+            <th class="th-statut">Statut</th>
+            <th class="th-paiement">Paiement</th>
+            <th class="th-montant">Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (commande of commandes(); track commande.idCommande) {
+            <tr
+              class="table-row"
+              tabindex="0"
+              role="button"
+              (click)="onSelectCommande(commande.idCommande)"
+              (keydown.enter)="onSelectCommande(commande.idCommande)"
+              (keydown.space)="onSelectCommande(commande.idCommande); $event.preventDefault()"
+            >
+              <td class="col-commande">
+                <div class="col-commande-info">
+                  <span class="commande-id">{{ commande.idCommande }}</span>
+                  <span class="commande-date">{{ formatDate(commande.dateCommande) }}</span>
+                </div>
+              </td>
+              <td class="col-agriculteur">
+                {{ commande.nomUtilisateur || '—' }}
+              </td>
+              <td class="col-statut">
+                <span [class]="getStatutClass(commande.status)">
+                  {{ getStatutLabel(commande.status) }}
+                </span>
+              </td>
+              <td class="col-paiement">
+                <span class="paiement-neutral">—</span>
+              </td>
+              <td class="col-montant">
+                {{ formatMontant(commande.montantTotal) }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

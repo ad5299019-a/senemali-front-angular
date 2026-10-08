@@ -1,0 +1,14 @@
+
+.stat-card { position: relative; display: block; min-height: 112px; padding: 17px 76px 15px 18px; }
+
+.stat-card__label { overflow: hidden; font-size: 16px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.stat-card__value { margin-top: 5px; font-size: 36px; font-weight: 400; line-height: 1.1; }
+
+.bg-green {
+  background-color: var(--color-primary-600);
+  color: white;
+}
+
+.bg-white {
+  color: var(--color-primary-600);
+}

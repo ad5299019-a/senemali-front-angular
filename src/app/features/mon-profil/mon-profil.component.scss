@@ -1,8 +1,400 @@
+:host {
+  display: block;
+  width: 100%;
+}
 
-    .form-card { max-width: 620px; padding: 24px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .status-banner {
-      display: flex; align-items: center; gap: 8px; padding: 12px 16px; margin-bottom: 18px;
-      max-width: 620px; font-size: 13px; font-weight: 600; color: var(--color-text-muted);
-    }
-  
+.profile-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px 16px 48px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ----------------------------------------------------
+   Carte principale
+------------------------------------------------------- */
+.profile-card {
+  background: var(--color-surface, #ffffff);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(20, 30, 20, 0.06));
+  border: 1px solid var(--color-border, #e3ebe5);
+  box-sizing: border-box;
+  width: 100%;
+  transition: max-width 0.2s ease;
+}
+
+.profile-card--view {
+  max-width: 640px;
+  padding: 48px 40px;
+}
+
+.profile-card--edit {
+  max-width: 860px;
+  padding: 48px 48px;
+}
+
+/* ----------------------------------------------------
+   En-tête de profil (Avatar + Nom + Rôle)
+------------------------------------------------------- */
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  margin-bottom: 36px;
+}
+
+.profile-avatar-container {
+  position: relative;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--color-primary-100, #e2f2e6);
+  color: var(--color-primary-600, #1d6832);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+}
+
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-primary-500, #237a3b);
+  border: 2.5px solid #ffffff;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  padding: 0;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-600, #1d6832);
+    transform: scale(1.08);
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #ffffff;
+    line-height: 18px;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.profile-header__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text, #1c1e1c);
+  margin: 0;
+  line-height: 1.25;
+  font-family: var(--font-sans);
+}
+
+.profile-subtitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-muted, #616861);
+  margin: 6px 0 0;
+  line-height: 1.25;
+  font-family: var(--font-sans);
+}
+
+/* ----------------------------------------------------
+   Maquette 1 : Consultation (1 colonne centrée)
+------------------------------------------------------- */
+.profile-info-list {
+  max-width: 380px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.info-field {
+  height: 48px;
+  border: 1px solid var(--color-input-icon, #9db2ce);
+  border-radius: var(--radius-md, 10px);
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 14px;
+  box-sizing: border-box;
+}
+
+.field-icon {
+  color: var(--color-input-icon, #9db2ce);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.field-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text, #1c1e1c);
+  font-family: var(--font-sans);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-actions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-modifier {
+  height: 46px;
+  min-width: 220px;
+  padding: 0 32px;
+  background: var(--color-primary-500, #237a3b);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  border: none;
+  border-radius: var(--radius-md, 10px);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+
+  &:hover {
+    background: var(--color-primary-600, #1d6832);
+    transform: translateY(-1px);
+  }
+
+  mat-icon {
+    font-size: 19px;
+    width: 19px;
+    height: 19px;
+    color: #ffffff;
+    line-height: 19px;
+  }
+}
+
+/* ----------------------------------------------------
+   Maquette 2 : Modification (2 colonnes)
+------------------------------------------------------- */
+.profile-form {
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 32px;
+  row-gap: 20px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-field {
+  height: 48px;
+  border: 1px solid var(--color-input-icon, #9db2ce);
+  border-radius: var(--radius-md, 10px);
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus-within {
+    border-color: var(--color-primary-400, #3fae5a);
+    box-shadow: 0 0 0 3px var(--color-primary-50, #f7faf8);
+  }
+
+  &--error {
+    border-color: var(--color-danger-500, #dc2626) !important;
+  }
+}
+
+.input-control {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--color-text, #1c1e1c);
+  background: transparent;
+  padding: 0;
+  height: 100%;
+
+  &::placeholder {
+    color: var(--color-text, #1c1e1c);
+    opacity: 0.85;
+  }
+}
+
+.btn-annuler {
+  height: 46px;
+  width: 100%;
+  border: 1.5px solid var(--color-primary-500, #237a3b);
+  background: #ffffff;
+  color: var(--color-primary-500, #237a3b);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  border-radius: var(--radius-md, 10px);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin-top: 4px;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-50, #f7faf8);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.btn-enregistrer {
+  height: 46px;
+  width: 100%;
+  border: none;
+  background: var(--color-primary-500, #237a3b);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  border-radius: var(--radius-md, 10px);
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin-top: 4px;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-600, #1d6832);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+/* ----------------------------------------------------
+   Responsive Design
+------------------------------------------------------- */
+@media (max-width: 800px) {
+  .profile-card--view,
+  .profile-card--edit {
+    padding: 32px 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .form-col {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .profile-header__info {
+    align-items: center;
+  }
+
+  .profile-avatar-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .avatar-placeholder {
+    font-size: 28px;
+  }
+
+  .btn-modifier {
+    width: 100%;
+  }
+}

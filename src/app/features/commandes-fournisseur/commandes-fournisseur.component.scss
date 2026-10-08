@@ -1,0 +1,227 @@
+.page {
+    width: 1174px;
+    height: 136px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #fff;
+    border-radius: var(--radius-md);
+    justify-content: center;
+}
+
+h1 {
+  margin: 0;
+  margin-left: 2%;
+}
+
+p {
+  margin: 0;
+  margin-left: 2%;
+  color: var(--color-neutral-600);
+}
+
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 22px; }
+
+/* Bloc 'Toutes les commandes' */
+.orders-card {
+  width: 1174px;
+  max-width: 100%;
+  margin-top: 24px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.orders-card__header {
+  padding: 22px 24px 18px;
+}
+
+.orders-card__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.orders-card__subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* Zone de défilement vertical et horizontal */
+.table-scroll-wrap {
+  width: 100%;
+  max-height: 520px;
+  overflow-y: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.orders-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+/* En-tête du tableau */
+.orders-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-700);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.orders-table thead th.th-commande,
+.orders-table tbody td.col-commande {
+  text-align: center;
+  width: 20%;
+}
+
+.orders-table thead th.th-agriculteur,
+.orders-table tbody td.col-agriculteur {
+  text-align: left;
+  width: 28%;
+}
+
+.orders-table thead th.th-statut,
+.orders-table tbody td.col-statut {
+  text-align: center;
+  width: 18%;
+}
+
+.orders-table thead th.th-paiement,
+.orders-table tbody td.col-paiement {
+  text-align: center;
+  width: 14%;
+}
+
+.orders-table thead th.th-montant,
+.orders-table tbody td.col-montant {
+  text-align: right;
+  padding-right: 24px;
+  width: 20%;
+}
+
+/* Corps du tableau */
+.orders-table tbody td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+  color: var(--color-text);
+}
+
+.orders-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.orders-table tbody tr:hover {
+  background-color: var(--color-primary-50);
+}
+
+.orders-table tbody tr:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: -2px;
+}
+
+.orders-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Cellule Commande */
+.col-commande-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.commande-id {
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.commande-date {
+  font-size: 12px;
+  color: var(--color-text-subtle);
+  line-height: 1.2;
+}
+
+/* Cellule Agriculteur */
+.col-agriculteur {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* Badges Statut */
+.badge-statut {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.badge-livree {
+  background-color: var(--color-success-50);
+  color: var(--color-success-500);
+}
+
+.badge-en-cours {
+  background-color: var(--color-warning-50);
+  color: var(--color-warning-500);
+}
+
+.badge-annuler {
+  background-color: var(--color-danger-50);
+  color: var(--color-danger-500);
+}
+
+.badge-neutral {
+  background-color: #f1f3f1;
+  color: var(--color-text-muted);
+}
+
+/* Cellule Paiement */
+.paiement-neutral {
+  color: var(--color-text-subtle);
+  font-size: 14px;
+}
+
+/* Cellule Montant */
+.col-montant {
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+/* États de chargement et vide */
+.table-loading,
+.table-empty {
+  padding: 48px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

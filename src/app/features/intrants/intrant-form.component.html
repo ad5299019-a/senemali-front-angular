@@ -1,53 +1,117 @@
+<div class="intrant-form-page">
+  <!-- En-tête -->
+  <header class="page-header">
+    <h1 class="page-title">Intrants</h1>
+    <p class="page-subtitle">Gérer votre catalogue de produits agricoles</p>
+  </header>
 
-    <app-page-header [title]="isEdit() ? 'Modifier mon intrant' : 'Nouvel intrant'">
-      <a routerLink="/mes-intrants" class="btn btn-outline">← Retour à la liste</a>
-    </app-page-header>
+  <!-- Formulaire dans un conteneur blanc fidèle au Figma -->
+  <div class="card form-card">
+    <h2 class="form-section-title">Information du produit</h2>
 
-    @if (isEdit()) {
-      <p class="notice text-muted">
-        Toute modification remet votre intrant en statut « en attente » de nouvelle validation par un administrateur.
-      </p>
-    }
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-content">
+      <div class="form-grid">
+        <!-- Colonne gauche -->
+        <div class="form-col">
+          <div class="field-wrap">
+            <input
+              type="text"
+              class="form-input"
+              formControlName="nomIntrant"
+              placeholder="Nom du produit"
+              [class.invalid]="isInvalid('nomIntrant')"
+            />
+          </div>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
-      <div class="field">
-        <label>Image</label>
-        <app-file-upload folder="intrants" [initialUrl]="form.controls.imageUrl.value" (uploaded)="form.patchValue({ imageUrl: $event })" />
+          <div class="field-wrap">
+            <textarea
+              class="form-input form-textarea"
+              formControlName="description"
+              placeholder="Description"
+            ></textarea>
+          </div>
+
+          <div class="field-wrap">
+            <input
+              type="number"
+              class="form-input"
+              formControlName="prix"
+              placeholder="Prix"
+              [class.invalid]="isInvalid('prix')"
+            />
+          </div>
+
+          <div class="field-wrap">
+            <input
+              type="text"
+              class="form-input"
+              formControlName="localisation"
+              placeholder="Localisation"
+            />
+          </div>
+        </div>
+
+        <!-- Colonne droite -->
+        <div class="form-col">
+          <!-- Zone d'upload d'image -->
+          <div class="upload-box" [class.has-preview]="!!previewUrl()">
+            @if (previewUrl(); as preview) {
+              <div class="preview-wrap">
+                <img [src]="preview" alt="Aperçu" class="preview-img" />
+                <button type="button" class="btn-remove-preview" (click)="removeImage()" title="Supprimer l'image">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            } @else {
+              <label class="upload-dropzone">
+                <input type="file" accept="image/*" hidden (change)="onFileSelected($event)" />
+                <mat-icon class="upload-icon">upload</mat-icon>
+                <span class="upload-title">Cliquez pour ajouter une image</span>
+                <span class="upload-subtitle">PNG, JPG...</span>
+                @if (uploading()) {
+                  <span class="uploading-indicator">Envoi en cours...</span>
+                }
+              </label>
+            }
+          </div>
+
+          <div class="field-wrap">
+            <input
+              type="text"
+              class="form-input"
+              formControlName="typeIntrant"
+              placeholder="Type"
+              [class.invalid]="isInvalid('typeIntrant')"
+            />
+          </div>
+
+          <div class="field-wrap">
+            <input
+              type="text"
+              class="form-input"
+              formControlName="unite"
+              placeholder="Unité"
+            />
+          </div>
+
+          <div class="field-wrap">
+            <input
+              type="number"
+              class="form-input"
+              formControlName="quantite"
+              placeholder="Quantité disponible"
+            />
+          </div>
+        </div>
       </div>
 
-      <div class="field">
-        <label>Nom de l'intrant</label>
-        <input class="input" formControlName="nomIntrant" placeholder="Ex : Engrais NPK 15-15-15" [class.invalid]="isInvalid('nomIntrant')" />
-        @if (isInvalid('nomIntrant')) { <span class="error">Ce champ est requis</span> }
-      </div>
-
-      <div class="field">
-        <label>Type d'intrant</label>
-        <input class="input" formControlName="typeIntrant" placeholder="Ex : Engrais, semence, produit phytosanitaire..." [class.invalid]="isInvalid('typeIntrant')" />
-        @if (isInvalid('typeIntrant')) { <span class="error">Ce champ est requis</span> }
-      </div>
-
-      <div class="field">
-        <label>Prix (FCFA)</label>
-        <input class="input" type="number" min="0" formControlName="prix" [class.invalid]="isInvalid('prix')" />
-        @if (isInvalid('prix')) { <span class="error">Prix requis (≥ 0)</span> }
-      </div>
-
-      <div class="field">
-        <label>Description</label>
-        <textarea class="textarea" formControlName="description"></textarea>
-      </div>
-
-      <label class="checkbox-field">
-        <input type="checkbox" formControlName="disponible" />
-        Disponible à la vente
-      </label>
-
-      <div class="flex gap-2" style="margin-top: 16px;">
-        <button type="submit" class="btn btn-primary" [disabled]="saving()">
-          {{ saving() ? 'Enregistrement...' : (isEdit() ? 'Enregistrer' : 'Publier') }}
+      <!-- Boutons d'action -->
+      <footer class="form-actions">
+        <a routerLink="/mes-intrants" class="btn-cancel">Annuler</a>
+        <button type="submit" class="btn-submit" [disabled]="saving()">
+          {{ saving() ? 'En cours...' : (isEdit() ? 'Modifier' : 'Ajouter le produit') }}
         </button>
-        <a routerLink="/mes-intrants" class="btn btn-ghost">Annuler</a>
-      </div>
+      </footer>
     </form>
-  
+  </div>
+</div>

@@ -1,60 +1,240 @@
+@if (loading()) {
+  <div class="profile-loading">
+    <app-loading-spinner />
+  </div>
+} @else {
+  <div class="profile-container">
+    @if (!isEditing()) {
+      <!-- ============================================== -->
+      <!-- MAQUETTE 1 — PAGE PROFIL (CONSULTATION)        -->
+      <!-- ============================================== -->
+      <div class="profile-card profile-card--view">
+        <!-- Partie Haute : Avatar + Nom + Rôle -->
+        <div class="profile-header">
+          <div class="profile-avatar-container">
+            @if (avatarUrl() && !avatarImgFailed()) {
+              <img
+                [src]="avatarUrl()"
+                [alt]="displayName()"
+                (error)="avatarImgFailed.set(true)"
+                class="avatar-image"
+              />
+            } @else {
+              <div class="avatar-placeholder">
+                <span>{{ initials() }}</span>
+              </div>
+            }
+          </div>
 
-    <app-page-header title="Mon profil" subtitle="Ces informations sont visibles par les administrateurs et sur vos publications" />
+          <div class="profile-header__info">
+            <h1 class="profile-title">{{ displayName() }}</h1>
+            <p class="profile-subtitle">Fournisseur</p>
+          </div>
+        </div>
 
-    @if (loading()) {
-      <app-loading-spinner />
-    } @else {
-      <div class="status-banner card" [class]="'status-banner--' + statutTone()">
-        <span>Statut de validation :</span>
-        <app-status-badge [label]="statutLabel()" [tone]="statutTone()" />
+        <!-- Partie Informations (champs non éditables) -->
+        <div class="profile-info-list">
+          <!-- 1. Email -->
+          <div class="info-field">
+            <mat-icon class="field-icon">mail_outline</mat-icon>
+            <span class="field-value">{{ displayEmail() }}</span>
+          </div>
+
+          <!-- 2. Téléphone -->
+          <div class="info-field">
+            <mat-icon class="field-icon">phone</mat-icon>
+            <span class="field-value">{{ displayTelephone() }}</span>
+          </div>
+
+          <!-- 3. Localisation -->
+          <div class="info-field">
+            <mat-icon class="field-icon">location_on</mat-icon>
+            <span class="field-value">{{ displayLocalisation() }}</span>
+          </div>
+
+          <!-- 4. Mot de passe masqué -->
+          <div class="info-field">
+            <mat-icon class="field-icon">lock</mat-icon>
+            <span class="field-value">Mot de passe</span>
+          </div>
+        </div>
+
+        <!-- Bouton Modifier -->
+        <div class="profile-actions">
+          <button type="button" class="btn-modifier" (click)="goToEdit()">
+            <mat-icon>edit</mat-icon>
+            <span>Modifier</span>
+          </button>
+        </div>
       </div>
+    } @else {
+      <!-- ============================================== -->
+      <!-- MAQUETTE 2 — MODIFIER MON PROFIL (ÉDITION)     -->
+      <!-- ============================================== -->
+      <div class="profile-card profile-card--edit">
+        <!-- Partie Haute : Avatar avec bouton caméra + Nom + Rôle -->
+        <div class="profile-header">
+          <div class="profile-avatar-container">
+            @if (avatarUrl() && !avatarImgFailed()) {
+              <img
+                [src]="avatarUrl()"
+                [alt]="displayName()"
+                (error)="avatarImgFailed.set(true)"
+                class="avatar-image"
+              />
+            } @else {
+              <div class="avatar-placeholder">
+                <span>{{ initials() }}</span>
+              </div>
+            }
 
-      <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card">
-        <div class="field">
-          <label>Photo de profil</label>
-          <app-file-upload folder="profils" [initialUrl]="form.controls.photoProfil.value" (uploaded)="form.patchValue({ photoProfil: $event })" />
-        </div>
+            <button
+              type="button"
+              class="avatar-edit-btn"
+              (click)="avatarFileInput.click()"
+              [disabled]="uploadingAvatar()"
+              title="Modifier la photo"
+              aria-label="Modifier la photo de profil"
+            >
+              <mat-icon>photo_camera</mat-icon>
+            </button>
 
-        <div class="grid-2">
-          <div class="field">
-            <label>Nom</label>
-            <input class="input" formControlName="nom" [class.invalid]="isInvalid('nom')" />
+            <input
+              #avatarFileInput
+              type="file"
+              accept="image/*"
+              class="sr-only"
+              (change)="onFileSelected($event)"
+            />
           </div>
-          <div class="field">
-            <label>Prénom</label>
-            <input class="input" formControlName="prenom" [class.invalid]="isInvalid('prenom')" />
+
+          <div class="profile-header__info">
+            <h1 class="profile-title">{{ form.controls.prenom.value }} {{ form.controls.nom.value }}</h1>
+            <p class="profile-subtitle">Fournisseur</p>
           </div>
         </div>
 
-        <div class="grid-2">
-          <div class="field">
-            <label>Téléphone</label>
-            <input class="input" formControlName="telephone" [class.invalid]="isInvalid('telephone')" />
+        <!-- Formulaire Deux Colonnes -->
+        <form [formGroup]="form" (ngSubmit)="submit()" class="profile-form">
+          <div class="form-grid">
+            <!-- Colonne Gauche -->
+            <div class="form-col">
+              <!-- Nom -->
+              <div class="input-field" [class.input-field--error]="isInvalid('nom')">
+                <mat-icon class="field-icon">person</mat-icon>
+                <input
+                  type="text"
+                  formControlName="nom"
+                  placeholder="Nom"
+                  class="input-control"
+                />
+              </div>
+
+              <!-- Prénom -->
+              <div class="input-field" [class.input-field--error]="isInvalid('prenom')">
+                <mat-icon class="field-icon">person</mat-icon>
+                <input
+                  type="text"
+                  formControlName="prenom"
+                  placeholder="Prénom"
+                  class="input-control"
+                />
+              </div>
+
+              <!-- Email -->
+              <div class="input-field">
+                <mat-icon class="field-icon">mail_outline</mat-icon>
+                <input
+                  type="email"
+                  formControlName="email"
+                  placeholder="Email"
+                  class="input-control"
+                />
+              </div>
+
+              <!-- Localisation -->
+              <div class="input-field" [class.input-field--error]="isInvalid('localisation')">
+                <mat-icon class="field-icon">location_on</mat-icon>
+                <input
+                  type="text"
+                  formControlName="localisation"
+                  placeholder="Localisation"
+                  class="input-control"
+                />
+              </div>
+
+              <!-- Bouton Annuler -->
+              <button
+                type="button"
+                class="btn-annuler"
+                (click)="cancelEdit()"
+                [disabled]="saving()"
+              >
+                Annuler
+              </button>
+            </div>
+
+            <!-- Colonne Droite -->
+            <div class="form-col">
+              <!-- Téléphone -->
+              <div class="input-field" [class.input-field--error]="isInvalid('telephone')">
+                <mat-icon class="field-icon">phone</mat-icon>
+                <input
+                  type="tel"
+                  formControlName="telephone"
+                  placeholder="Téléphone"
+                  class="input-control"
+                />
+              </div>
+
+              <!-- Ancien mot de passe -->
+              <div class="input-field">
+                <mat-icon class="field-icon">lock</mat-icon>
+                <input
+                  type="password"
+                  formControlName="ancienMotDePasse"
+                  placeholder="Ancien mot de passe"
+                  class="input-control"
+                  autocomplete="current-password"
+                />
+              </div>
+
+              <!-- Nouveau mot de passe -->
+              <div class="input-field">
+                <mat-icon class="field-icon">lock</mat-icon>
+                <input
+                  type="password"
+                  formControlName="nouveauMotDePasse"
+                  placeholder="Nouveau mot de passe"
+                  class="input-control"
+                  autocomplete="new-password"
+                />
+              </div>
+
+              <!-- Confirmer nouveau mot de passe -->
+              <div class="input-field">
+                <mat-icon class="field-icon">lock</mat-icon>
+                <input
+                  type="password"
+                  formControlName="confirmerMotDePasse"
+                  placeholder="Confirmer nouveau mot de passe"
+                  class="input-control"
+                  autocomplete="new-password"
+                />
+              </div>
+
+              <!-- Bouton Enregistrer -->
+              <button
+                type="submit"
+                class="btn-enregistrer"
+                [disabled]="saving()"
+              >
+                {{ saving() ? 'Enregistrement...' : 'Enregistrer' }}
+              </button>
+            </div>
           </div>
-          <div class="field">
-            <label>Localisation</label>
-            <input class="input" formControlName="localisation" [class.invalid]="isInvalid('localisation')" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label>Nom de l'entreprise</label>
-          <input class="input" formControlName="nomEntreprise" />
-        </div>
-
-        <div class="field">
-          <label>Zone de vente</label>
-          <input class="input" formControlName="zoneDeVente" />
-        </div>
-
-        <div class="field">
-          <label>Description de votre activité</label>
-          <textarea class="textarea" formControlName="description"></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary" [disabled]="saving()">
-          {{ saving() ? 'Enregistrement...' : 'Enregistrer les modifications' }}
-        </button>
-      </form>
+        </form>
+      </div>
     }
-  
+  </div>
+}

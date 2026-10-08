@@ -13,6 +13,7 @@ export const NAV_ITEMS: NavItem[] = [
   // --- Espace Fournisseur ---
   { label: 'Mon profil', path: '/mon-profil', icon: 'person', roles: [RoleEnum.FOURNISSEUR] },
   { label: 'Mes intrants', path: '/mes-intrants', icon: 'compost', roles: [RoleEnum.FOURNISSEUR] },
+  { label: 'Mes commandes', path: '/fournisseur/commandes', icon: 'package_2', roles: [RoleEnum.FOURNISSEUR] },
   { label: 'Mes notifications', path: '/mes-notifications', icon: 'notifications', roles: [RoleEnum.FOURNISSEUR] },
 
   // --- Utilisateurs (Admin) ---

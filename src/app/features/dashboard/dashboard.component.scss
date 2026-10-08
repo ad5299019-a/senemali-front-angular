@@ -90,3 +90,199 @@
       .recent-orders__status { grid-column: 3; grid-row: 2; padding-left: 0; text-align: right; }
     }
   
+
+
+/* =========================================
+   COMMANDES RÉCENTES - FOURNISSEUR
+   ========================================= */
+
+.recent-orders {
+  margin-top: 22px;
+  overflow: hidden;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.recent-orders__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.recent-orders__header h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.recent-orders__header > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-primary-500);
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.recent-orders__header > a mat-icon {
+  width: 17px;
+  height: 17px;
+  font-size: 17px;
+}
+
+.recent-orders__body {
+  padding: 0 20px;
+}
+
+/* Une commande */
+
+.recent-order {
+  display: grid;
+  grid-template-columns: 190px 110px 1fr;
+  align-items: center;
+  gap: 18px;
+  min-height: 84px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.recent-order:last-child {
+  border-bottom: 0;
+}
+
+/* Client + détails */
+
+.recent-order__customer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  font-size: 18px;
+}
+
+.recent-order__customer strong {
+  overflow: hidden;
+  color: #26362b;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-order__customer span {
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Statut */
+
+.recent-order__status {
+  justify-self: start;
+  padding: 6px 11px;
+  border-radius: 20px;
+  background: var(--color-warning-50);
+  color: var(--color-warning-500);
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Montant */
+
+.recent-order__amount {
+  justify-self: end;
+  color: #26362b;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* =========================================
+   STATUTS
+   ========================================= */
+
+
+/* Commande livrée */
+// .recent-order__status {
+//   &[class] {
+//     /* garde le style de base */
+//   }
+// }
+
+/* =========================================
+   ÉTAT VIDE
+   ========================================= */
+
+.recent-orders__empty {
+  padding: 24px 0;
+  color: var(--color-text-subtle);
+  font-size: 11px;
+  text-align: center;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 900px) {
+  .recent-order {
+    grid-template-columns: minmax(180px, 1fr) 100px 130px;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .recent-orders__header {
+    padding: 16px;
+  }
+
+  .recent-orders__body {
+    padding: 0 16px;
+  }
+
+  .recent-order {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 8px 12px;
+    min-height: auto;
+    padding: 15px 0;
+  }
+
+  .recent-order__customer {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .recent-order__status {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .recent-order__amount {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+  }
+
+  .recent-orders__header > a {
+    font-size: 0;
+  }
+
+  .recent-orders__header > a mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+}

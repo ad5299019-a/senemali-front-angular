@@ -39,6 +39,18 @@ export const routes: Routes = [
         canActivate: [roleGuard([RoleEnum.FOURNISSEUR])],
         loadChildren: () => import('./features/intrants/intrant.routes').then((m) => m.MES_INTRANTS_ROUTES),
       },
+
+      {
+        path: "fournisseur/commandes",
+        canActivate: [roleGuard([RoleEnum.FOURNISSEUR])],
+        loadComponent: () => import('./features/commandes-fournisseur/commandes-fournisseur.component').then((m) => m.CommandesFournisseurComponent),
+      },
+      {
+        path: "fournisseur/commandes/:id",
+        canActivate: [roleGuard([RoleEnum.FOURNISSEUR])],
+        loadComponent: () => import('./features/commandes-fournisseur-detail/commandes-fournisseur-detail.component').then((m) => m.CommandesFournisseurDetailComponent),
+      },
+
       {
         path: 'mes-notifications',
         canActivate: [roleGuard([RoleEnum.FOURNISSEUR])],
