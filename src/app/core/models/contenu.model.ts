@@ -18,18 +18,18 @@ export interface TutorielResponse {
   idTutoriel: number;
   titreTutoriel: string;
   descriptionTutoriel: string;
-  urlImage: string;
-  urlVideo: string;
-  idCategorie: number;
-  nomCategorie?: string;
-  idAdministrateur: number;
+  urlImage?: string | null;
+  urlVideo?: string | null;
+  idCategorie?: number | null;
+  nomCategorie?: string | null;
+  idAdministrateur?: number | null;
 }
 export interface TutorielRequest {
   titreTutoriel: string;
   descriptionTutoriel: string;
-  urlImage: string;
-  urlVideo: string;
-  idCategorie: number;
+  urlImage?: string | null;
+  urlVideo?: string | null;
+  idCategorie?: number | null;
 }
 
 export interface PrixMarcheResponse {

@@ -29,14 +29,14 @@
     </div>
 
     <div class="field">
-      <label for="idCategorie">Culture concernée</label>
-      <select id="idCategorie" class="select" formControlName="idCategorie" [class.invalid]="isInvalid('idCategorie')">
-        <option [ngValue]="null" disabled>Choisir une catégorie</option>
+      <label for="idCategorie">Culture ou catégorie concernée</label>
+      <select id="idCategorie" class="select" formControlName="idCategorie">
+        <option [ngValue]="null">Toutes les catégories (Général)</option>
         @for (c of categories(); track c.idCategorie) {
           <option [ngValue]="c.idCategorie">{{ c.nomCategorie }}</option>
         }
       </select>
-      @if (isInvalid('idCategorie')) { <span class="error">Choisissez une catégorie</span> }
+      <span class="hint">Sélectionnez « Toutes les catégories » si ce tutoriel s’adresse à l'ensemble des cultures.</span>
     </div>
 
     <div class="field">
