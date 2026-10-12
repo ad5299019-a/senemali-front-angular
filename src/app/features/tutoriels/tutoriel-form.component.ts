@@ -30,12 +30,12 @@ export class TutorielFormComponent {
   mediaIsVideo = signal(false);
   private currentId?: number;
 
-  form = this.fb.nonNullable.group({
+  form = this.fb.group({
     titreTutoriel: ['', Validators.required],
     descriptionTutoriel: ['', Validators.required],
     urlImage: [''],
     urlVideo: [''],
-    idCategorie: [null as number | null, Validators.required],
+    idCategorie: [null as number | null], // null = Toutes les catégories
   });
 
   ngOnInit(): void {
@@ -49,9 +49,9 @@ export class TutorielFormComponent {
         this.form.patchValue({
           titreTutoriel: data.titreTutoriel,
           descriptionTutoriel: data.descriptionTutoriel,
-          urlImage: data.urlImage,
-          urlVideo: data.urlVideo,
-          idCategorie: data.idCategorie,
+          urlImage: data.urlImage ?? '',
+          urlVideo: data.urlVideo ?? '',
+          idCategorie: data.idCategorie ?? null,
         });
         this.mediaIsVideo.set(!!data.urlVideo && !data.urlImage);
       });
@@ -65,7 +65,7 @@ export class TutorielFormComponent {
 
   mediaInitialUrl(): string {
     const value = this.form.getRawValue();
-    return this.mediaIsVideo() ? value.urlVideo : value.urlImage;
+    return this.mediaIsVideo() ? (value.urlVideo ?? '') : (value.urlImage ?? '');
   }
 
   setMedia(media: { fileUrl: string; isVideo: boolean }): void {
@@ -83,15 +83,21 @@ export class TutorielFormComponent {
   }
 
   submit(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    const formValue = this.form.getRawValue();
-    if (formValue.idCategorie === null) {
-      this.form.controls.idCategorie.markAsTouched();
-      this.toast.error('Choisissez une catégorie avant de continuer.');
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
+    const formValue = this.form.getRawValue();
     this.saving.set(true);
-    const payload: TutorielRequest = { ...formValue, idCategorie: formValue.idCategorie };
+
+    const payload: TutorielRequest = {
+      titreTutoriel: formValue.titreTutoriel!,
+      descriptionTutoriel: formValue.descriptionTutoriel!,
+      urlImage: formValue.urlImage || '',
+      urlVideo: formValue.urlVideo || '',
+      idCategorie: formValue.idCategorie ?? null,
+    };
+
     const request$ = this.isEdit() ? this.service.update(this.currentId!, payload) : this.service.create(payload);
     request$.subscribe({
       next: () => {
