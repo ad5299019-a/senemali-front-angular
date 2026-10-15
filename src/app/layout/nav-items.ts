@@ -10,8 +10,8 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { label: 'Tableau de bord', path: '/dashboard', icon: 'dashboard', roles: [RoleEnum.ADMIN, RoleEnum.FOURNISSEUR] },
 
-  // --- Espace Fournisseur ---
-  { label: 'Mon profil', path: '/mon-profil', icon: 'person', roles: [RoleEnum.FOURNISSEUR] },
+  // --- Espace Profil (Fournisseur & Acheteur) ---
+  { label: 'Mon profil', path: '/mon-profil', icon: 'person', roles: [RoleEnum.FOURNISSEUR, RoleEnum.ACHETEUR] },
   { label: 'Mes intrants', path: '/mes-intrants', icon: 'compost', roles: [RoleEnum.FOURNISSEUR] },
   { label: 'Mes commandes', path: '/fournisseur/commandes', icon: 'package_2', roles: [RoleEnum.FOURNISSEUR] },
   { label: 'Mes notifications', path: '/mes-notifications', icon: 'notifications', roles: [RoleEnum.FOURNISSEUR] },
