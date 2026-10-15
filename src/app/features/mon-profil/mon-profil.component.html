@@ -28,7 +28,7 @@
 
           <div class="profile-header__info">
             <h1 class="profile-title">{{ displayName() }}</h1>
-            <p class="profile-subtitle">Fournisseur</p>
+            <p class="profile-subtitle">{{ roleLabel() }}</p>
           </div>
         </div>
 
@@ -50,12 +50,6 @@
           <div class="info-field">
             <mat-icon class="field-icon">location_on</mat-icon>
             <span class="field-value">{{ displayLocalisation() }}</span>
-          </div>
-
-          <!-- 4. Mot de passe masqué -->
-          <div class="info-field">
-            <mat-icon class="field-icon">lock</mat-icon>
-            <span class="field-value">Mot de passe</span>
           </div>
         </div>
 
@@ -109,8 +103,8 @@
           </div>
 
           <div class="profile-header__info">
-            <h1 class="profile-title">{{ form.controls.prenom.value }} {{ form.controls.nom.value }}</h1>
-            <p class="profile-subtitle">Fournisseur</p>
+            <h1 class="profile-title">{{ form.controls.prenom.value || 'Prénom' }} {{ form.controls.nom.value || 'Nom' }}</h1>
+            <p class="profile-subtitle">{{ roleLabel() }}</p>
           </div>
         </div>
 
@@ -188,39 +182,69 @@
               </div>
 
               <!-- Ancien mot de passe -->
-              <div class="input-field">
+              <div class="input-field input-field--with-action">
                 <mat-icon class="field-icon">lock</mat-icon>
                 <input
-                  type="password"
+                  [type]="showOldPassword() ? 'text' : 'password'"
                   formControlName="ancienMotDePasse"
                   placeholder="Ancien mot de passe"
                   class="input-control"
                   autocomplete="current-password"
                 />
+                <button
+                  type="button"
+                  class="eye-toggle-btn"
+                  (click)="showOldPassword.set(!showOldPassword())"
+                  [title]="showOldPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                  [attr.aria-label]="showOldPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                  tabindex="-1"
+                >
+                  <mat-icon class="toggle-icon">{{ showOldPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
               </div>
 
               <!-- Nouveau mot de passe -->
-              <div class="input-field">
+              <div class="input-field input-field--with-action">
                 <mat-icon class="field-icon">lock</mat-icon>
                 <input
-                  type="password"
+                  [type]="showNewPassword() ? 'text' : 'password'"
                   formControlName="nouveauMotDePasse"
                   placeholder="Nouveau mot de passe"
                   class="input-control"
                   autocomplete="new-password"
                 />
+                <button
+                  type="button"
+                  class="eye-toggle-btn"
+                  (click)="showNewPassword.set(!showNewPassword())"
+                  [title]="showNewPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                  [attr.aria-label]="showNewPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                  tabindex="-1"
+                >
+                  <mat-icon class="toggle-icon">{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
               </div>
 
               <!-- Confirmer nouveau mot de passe -->
-              <div class="input-field">
+              <div class="input-field input-field--with-action">
                 <mat-icon class="field-icon">lock</mat-icon>
                 <input
-                  type="password"
+                  [type]="showConfirmPassword() ? 'text' : 'password'"
                   formControlName="confirmerMotDePasse"
                   placeholder="Confirmer nouveau mot de passe"
                   class="input-control"
                   autocomplete="new-password"
                 />
+                <button
+                  type="button"
+                  class="eye-toggle-btn"
+                  (click)="showConfirmPassword.set(!showConfirmPassword())"
+                  [title]="showConfirmPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                  [attr.aria-label]="showConfirmPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                  tabindex="-1"
+                >
+                  <mat-icon class="toggle-icon">{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
               </div>
 
               <!-- Bouton Enregistrer -->

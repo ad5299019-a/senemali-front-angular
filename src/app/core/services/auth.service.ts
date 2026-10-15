@@ -64,6 +64,14 @@ export class AuthService {
     return localStorage.getItem(TOKEN_KEY);
   }
 
+  updateCurrentUser(userUpdate: Partial<SessionUser>): void {
+    const current = this._currentUser();
+    if (!current) return;
+    const updated: SessionUser = { ...current, ...userUpdate };
+    localStorage.setItem(USER_KEY, JSON.stringify(updated));
+    this._currentUser.set(updated);
+  }
+
   private storeSession(auth: AuthResponse, requestIdentifier: string): void {
     const user: SessionUser = {
       id: auth.id,

@@ -28,10 +28,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
 
-      // --- Espace Fournisseur ---
+      // --- Espace Profil (Fournisseur, Acheteur, Admin) ---
       {
         path: 'mon-profil',
-        canActivate: [roleGuard([RoleEnum.FOURNISSEUR])],
+        canActivate: [roleGuard([RoleEnum.FOURNISSEUR, RoleEnum.ACHETEUR, RoleEnum.ADMIN])],
         loadChildren: () => import('./features/mon-profil/mon-profil.routes').then((m) => m.MON_PROFIL_ROUTES),
       },
       {
